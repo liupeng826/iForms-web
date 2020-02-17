@@ -9,9 +9,6 @@ type IAxiosResponse<T> = Request.IAxiosResponse<T>
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  headers: {
-    'Content-Type': 'application/json'
-  },
   timeout: Config.timeout
   // withCredentials: true // send cookies when cross-domain requests
 })
@@ -20,10 +17,11 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 判断是否存在token，如果存在的话，则每个http header都加上token
-    const jwtToken = getLocalStorage('JWT_TOKEN')
+    const jwtToken = getLocalStorage(Config.jwt_token_name)
     if (jwtToken) {
-      config.headers.Authorization = `token ${jwtToken}`
+      config.headers.Authorization = jwtToken
     }
+    config.headers['Content-Type'] = 'application/json'
     return config
   },
   (err:any) => {

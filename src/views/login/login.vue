@@ -108,7 +108,7 @@ export default class LoginComponent extends Vue {
           this.$message.success('登录成功!')
           const data: any = {
             username: this.form.username,
-            token: res.data
+            token: res.data.token
           }
           UserModule.login(data)
           await this.$router.push('/list')

@@ -9,29 +9,29 @@
         type="selection"
         width="55"
       />
-      <el-table-column prop="n_title" label="问卷名称" align="left">
+      <el-table-column prop="title" label="问卷名称" align="left">
         <template slot-scope="{ row }">
-          <router-link tag="a" :to="`./view/${row.n_id}`">
-            {{ row.n_title }}
-            <el-tag v-if="isExpired(row.n_deadline)" class="ml-10" size="mini" type="danger">已截止</el-tag>
+          <router-link tag="a" :to="`./view/${row.id}`">
+            {{ row.title }}
+            <el-tag v-if="isExpired(row.deadline)" class="ml-10" size="mini" type="danger">已截止</el-tag>
           </router-link>
         </template>
       </el-table-column>
-      <el-table-column prop="n_creattime" label="创建时间" align="center">
+      <el-table-column prop="createdDate" label="创建时间" align="center">
         <template slot-scope="{ row }">
-          {{ row.n_creattime | formatTime }}
+          {{ row.createdDate | formatTime }}
         </template>
       </el-table-column>
-      <el-table-column prop="n_deadline" label="截止时间" align="center">
+      <el-table-column prop="deadline" label="截止时间" align="center">
         <template slot-scope="{ row }">
           <!-- 问卷超过截止日期 -->
-          {{ row.n_deadline | formatTime }}
+          {{ row.deadline | formatTime }}
         </template>
       </el-table-column>
-      <el-table-column prop="n_status" label="发布状态" align="center">
+      <el-table-column prop="publishStatus" label="发布状态" align="center">
         <template slot-scope="{ row }">
-          <el-tag :type="row.n_status | statusColorFilter">
-            {{ row.n_status | statusFilter }}
+          <el-tag :type="row.publishStatus | statusColorFilter">
+            {{ row.publishStatus | statusFilter }}
           </el-tag>
         </template>
       </el-table-column>
@@ -48,7 +48,7 @@
               <el-dropdown-item command="submitStatistic">查看回收情况</el-dropdown-item>
               <el-dropdown-item command="edit" divided>编辑问卷</el-dropdown-item>
               <el-dropdown-item command="deadline">编辑截止时间</el-dropdown-item>
-              <el-dropdown-item command="publish">{{ row.n_status === NaireStatus.PUBLISHED ? '停止发布' : '发布问卷' }}</el-dropdown-item>
+              <el-dropdown-item command="publish">{{ row.publishStatus === NaireStatus.PUBLISHED ? '停止发布' : '发布问卷' }}</el-dropdown-item>
               <el-dropdown-item command="delete">删除问卷</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -112,7 +112,7 @@ export default class NavBar extends Vue {
         this.$router.push({
           name: 'view',
           params: {
-            id: row.n_id
+            id: row.id
           }
         })
         break
@@ -124,7 +124,7 @@ export default class NavBar extends Vue {
         this.$router.push({
           name: 'submitStatistics',
           params: {
-            id: row.n_id
+            id: row.id
           }
         })
         break
@@ -132,7 +132,7 @@ export default class NavBar extends Vue {
         this.$router.push({
           name: 'edit',
           params: {
-            id: row.n_id
+            id: row.id
           }
         })
         break
@@ -163,7 +163,7 @@ export default class NavBar extends Vue {
 
   private async deleteNaire (nIds: string) {
     const res = await NaireAction.del({
-      n_id: nIds
+      id: nIds
     })
     if (res.success) {
       this.$message.success('删除成功')
@@ -178,7 +178,7 @@ export default class NavBar extends Vue {
       type: 'warning'
     })
       .then(async () => {
-        this.deleteNaire(row.n_id)
+        this.deleteNaire(row.id)
       })
       .catch(() => {})
   }
@@ -188,7 +188,7 @@ export default class NavBar extends Vue {
       type: 'warning'
     })
       .then(async () => {
-        const rowIds = this.selectContent.map(({ n_id: id }) => id).join(',')
+        const rowIds = this.selectContent.map(({ id }) => id).join(',')
         this.deleteNaire(rowIds)
       })
       .catch(() => {})
@@ -202,7 +202,7 @@ export default class NavBar extends Vue {
     this.$router.push({
       name: 'statisticsResult',
       params: {
-        id: row.n_id
+        id: row.id
       }
     })
   }
@@ -214,7 +214,7 @@ export default class NavBar extends Vue {
   async changeStatus (row: IApiNaireItem) {
     this.loading = true
     const res = await NaireAction.changeStatus({
-      n_id: row.n_id
+      id: row.id
     })
     this.loading = false
     if (res.success) {

@@ -1,6 +1,7 @@
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators'
 import store from '@/store'
 import { getLocalStorage, removeLocalStorage, setLocalStorage } from '@/utils/storage'
+import { Config } from '@/settings'
 
 interface LoginPayload {
   username: string,
@@ -17,7 +18,7 @@ export interface IUserState {
 class User extends VuexModule implements IUserState {
   public isAdmin: boolean = getLocalStorage('IS_ADMIN') || false
   public userName: string = getLocalStorage('USER_NAME') || 'admin'
-  public token: string = getLocalStorage('JWT_TOKEN') || ''
+  public token: string = getLocalStorage(Config.jwt_token_name) || ''
 
   @Mutation
   private UPDATE_IS_ADMIN (isAdmin: boolean) {
@@ -38,7 +39,7 @@ class User extends VuexModule implements IUserState {
   @Action
   public logout () {
     removeLocalStorage('IS_ADMIN')
-    removeLocalStorage('JWT_TOKEN')
+    removeLocalStorage(Config.jwt_token_name)
     removeLocalStorage('USER_NAME')
     this.UPDATE_IS_ADMIN(false)
   }
@@ -48,7 +49,7 @@ class User extends VuexModule implements IUserState {
     const { username, token } = payload
     setLocalStorage('IS_ADMIN', true) // 是否为管理员
     setLocalStorage('USER_NAME', username)
-    setLocalStorage('JWT_TOKEN', token)
+    setLocalStorage(Config.jwt_token_name, token)
     this.UPDATE_IS_ADMIN(true)
     this.UPDATE_USER_NAME(username)
     this.UPDATE_TOKEN(token)

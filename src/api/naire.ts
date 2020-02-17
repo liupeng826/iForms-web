@@ -1,11 +1,17 @@
 import request from '@/utils/request'
 import { IApiNaireSourceData, IApiNaireStatisticResult, IApiNaireItem } from './types'
+import { Config } from '@/settings'
 
 /**
  * 问卷列表
  */
 export const list = () => {
-  return request.get<IApiNaireItem[]>('/naire', {})
+  const data = {
+    description: Config.token_description,
+    supperId: '',
+    token: Config.token
+  }
+  return request.post<IApiNaireItem[]>('/api/form/getAllForms', data)
 }
 
 /**
@@ -72,7 +78,7 @@ export const crossanalysis = (data: {
  * @param data
  */
 export const questions = (data: {
-  n_id: string
+  id: string
 }) => {
   return request.post<any>('/naire/questions', data, {
     headers: {
@@ -86,7 +92,7 @@ export const questions = (data: {
  * @param data
  */
 export const detail = (data: {
-  n_id: string
+  id: string
   type: 'normal'
 }) => {
   return request.post<any>('/naire/detail', data, {
@@ -117,7 +123,7 @@ export const submit = (data: {
  * @param data
  */
 export const changeStatus = (data: {
-  n_id: string
+  id: string
 }) => {
   return request.get<any>('/naire/changeStatus', data)
 }
@@ -127,7 +133,7 @@ export const changeStatus = (data: {
  * @param data
  */
 export const submitStatistic = (data: {
-  n_id: string,
+  id: string,
   current: number,
   page_size: number,
   status: number,
@@ -141,8 +147,8 @@ export const submitStatistic = (data: {
  * @param data
  */
 export const changeTime = (data: {
-  n_id: string
-  n_deadline: number
+  id: string
+  deadline: number
 }) => {
   return request.post<any>('/naire/changeTime', data)
 }
@@ -152,7 +158,7 @@ export const changeTime = (data: {
  * @param data
  */
 export const del = (data: {
-  n_id: string
+  id: string
 }) => {
   return request.get<any>('/naire/del', data)
 }

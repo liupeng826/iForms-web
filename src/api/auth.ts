@@ -19,9 +19,6 @@ export function login (data: {
   username: string,
   password: string
 }) {
-  // const params = qs.stringify({
-  //   ...data
-  // })
   data.password = encrypt(data.password)
   return request.post<IToken>('/auth/login', data)
 }

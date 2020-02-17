@@ -23,14 +23,16 @@ export interface IApiQuestionItem {
 
 // 问卷格式
 export interface IApiNaireItem {
-  n_id: string,
-  a_id: string,
-  n_creattime: string,
-  n_deadline: string,
-  n_title: string,
-  n_status: string
-  n_intro: string
-  n_options: string
+  id: string,
+  supperId: string,
+  createdDate: string,
+  deadline: string,
+  title: string,
+  isActive: boolean,
+  publishStatus: string,
+  description: string,
+  n_options: string,
+  n_id: string
 }
 
 // 结果通统计
