@@ -17,10 +17,8 @@
         <el-form-item label="密码" prop="password">
           <el-input v-model="form.password" type="password" />
         </el-form-item>
-        <el-form-item prop="code">
-          <el-input v-model="form.code" auto-complete="off" placeholder="验证码" style="width: 63%">
-            <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon" />
-          </el-input>
+        <el-form-item label="验证码" prop="code">
+          <el-input v-model="form.code" auto-complete="off" style="width: 60%" />
           <div class="login-code">
             <img :src="data.codeUrl" alt="" @click="getCode">
           </div>
@@ -79,6 +77,13 @@ export default class LoginComponent extends Vue {
         message: '请输入密码',
         trigger: 'blur'
       }
+    ],
+    code: [
+      {
+        required: true,
+        message: '请输入验证码',
+        trigger: 'blur'
+      }
     ]
   }
   async getCode () {
@@ -87,10 +92,6 @@ export default class LoginComponent extends Vue {
       this.data.codeUrl = res.data.img
       this.form.uuid = res.data.uuid
     }
-    // AdminAction.getCodeImg().then(res => {
-    //   this.$data.codeUrl = res.data.img
-    //   this.form.uuid = res.data.uuid
-    // })
   }
 
   created () {
@@ -110,7 +111,7 @@ export default class LoginComponent extends Vue {
             token: res.data
           }
           UserModule.login(data)
-          // await this.$router.push('/list')
+          await this.$router.push('/list')
         } else {
           this.$message.error('登录失败，请检查账号密码是否正确。')
         }
