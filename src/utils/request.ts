@@ -112,14 +112,14 @@ service.defaults.transformResponse = (response) => {
     if (res.code === 0 || res.code === '0') {
       return {
         success: true,
-        data: res.token || res.data, // login 接口返回 token
+        data: res.data || '', // login 接口返回 data: {token:"", message: ""}
         msg: res.message || ''
       }
     } else {
       return {
         success: false,
-        data: res.data,
-        msg: res.message || res.data || ''
+        data: res.data || '',
+        msg: res.message || ''
       }
     }
   } catch (e) {
