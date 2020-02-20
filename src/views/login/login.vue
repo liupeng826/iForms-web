@@ -17,12 +17,12 @@
         <el-form-item label="密码" prop="password">
           <el-input v-model="form.password" type="password" />
         </el-form-item>
-        <el-form-item label="验证码" prop="code">
+        <!-- <el-form-item label="验证码" prop="code">
           <el-input v-model="form.code" auto-complete="off" style="width: 60%" />
           <div class="login-code">
             <img :src="data.codeUrl" alt="" @click="getCode">
           </div>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item>
           <el-button
             class="login-btn"
@@ -77,13 +77,13 @@ export default class LoginComponent extends Vue {
         message: '请输入密码',
         trigger: 'blur'
       }
-    ],
-    code: [
-      {
-        required: true,
-        message: '请输入验证码',
-        trigger: 'blur'
-      }
+    // ],
+    // code: [
+    //   {
+    //     required: true,
+    //     message: '请输入验证码',
+    //     trigger: 'blur'
+    //   }
     ]
   }
   async getCode () {
