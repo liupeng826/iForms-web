@@ -24,8 +24,10 @@ export function login (data: {
 }
 
 export function changePwd (data: {
-  oldpwd: string
-  newpwd: string
+  oldPass: string
+  newPass: string
 }) {
-  return request.post<any>('/auth/changepwd', data)
+  data.oldPass = encrypt(data.oldPass)
+  data.newPass = encrypt(data.newPass)
+  return request.post<any>('/api/users/updatePass', data)
 }

@@ -84,8 +84,6 @@ service.interceptors.response.use(
           break
         case 408: err.message = '请求超时(408)'
           break
-        case 500: err.message = '服务器错误(500)'
-          break
         case 501: err.message = '服务未实现(501)'
           break
         case 502: err.message = '网络错误(502)'
@@ -96,7 +94,7 @@ service.interceptors.response.use(
           break
         case 505: err.message = 'HTTP版本不受支持(505)'
           break
-        default: err.message = `连接出错(${err.response.status})!`
+        default: err.message = `${err.response.data.msg}!`
       }
     } else {
       // err.message = `连接出错(${err.response.status})!`

@@ -77,8 +77,8 @@ export default class extends Vue {
     ref.validate(async (valid) => {
       if (!valid) return
       const params = {
-        oldpwd: this.form.oldPasswd,
-        newpwd: this.form.passwd
+        oldPass: this.form.oldPasswd,
+        newPass: this.form.passwd
       }
       this.loading = true
       const res = await AdminAction.changePwd(params)
