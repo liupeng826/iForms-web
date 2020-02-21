@@ -99,7 +99,8 @@ service.interceptors.response.use(
         default: err.message = `连接出错(${err.response.status})!`
       }
     } else {
-      err.message = `连接出错(${err.response.status})!`
+      // err.message = `连接出错(${err.response.status})!`
+      err.message = `连接出错(${err})!`
     }
     Message.error(err.message)
     return Promise.reject(err) // 返回接口返回的错误信息
