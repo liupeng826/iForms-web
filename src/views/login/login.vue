@@ -50,7 +50,6 @@ import { Form as ElForm } from 'element-ui'
 
 import { UserModule } from '@/store/modules/user'
 import * as AdminAction from '@/api/auth'
-import { Config } from '../../settings'
 
 @Component
 export default class LoginComponent extends Vue {
@@ -109,9 +108,7 @@ export default class LoginComponent extends Vue {
           this.$message.success('登录成功!')
           const data: any = {
             username: this.form.username,
-            token: res.data.token,
-            client_name: res.data.user.client.name,
-            client_token: res.data.user.client.token
+            token: res.data.token
           }
           UserModule.login(data)
           await this.$router.push('/list')
