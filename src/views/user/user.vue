@@ -38,13 +38,16 @@
     <div>
       <el-table :data="list" border @selection-change="onSelectionChange">
         <el-table-column type="selection" />
-        <el-table-column prop="id" label="工号" />
+        <el-table-column prop="id" label="序号" />
+        <el-table-column prop="userId" label="工号" />
         <el-table-column prop="userName" label="姓名" />
         <el-table-column prop="sex" label="性别" />
-        <el-table-column prop="deptId" label="部门" />
-        <el-table-column prop="roleId" label="权限" />
         <el-table-column prop="email" label="邮箱" />
         <el-table-column prop="phone" label="手机号" />
+        <el-table-column prop="client" label="客户端" />
+        <el-table-column prop="market" label="市场" />
+        <el-table-column prop="branch" label="分支机构" />
+        <el-table-column prop="role" label="权限" />
         <el-table-column label="操作" width="180">
           <template slot-scope="{ row }">
             <el-button type="primary" @click="handleEdit(row)">编辑</el-button>

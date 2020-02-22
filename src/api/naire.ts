@@ -7,9 +7,9 @@ import { Config } from '@/settings'
  */
 export const list = () => {
   const data = {
-    description: Config.token_description,
-    supperId: '',
-    token: Config.token
+    clientName: Config.token_description,
+    clientToken: Config.token,
+    supperId: ''
   }
   return request.post<IApiNaireItem[]>('/api/form/getAllForms', data)
 }
