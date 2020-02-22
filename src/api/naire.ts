@@ -1,14 +1,14 @@
 import request from '@/utils/request'
 import { IApiNaireSourceData, IApiNaireStatisticResult, IApiNaireItem } from './types'
 import { Config } from '@/settings'
-
+import { getLocalStorage } from '@/utils/storage'
 /**
  * 问卷列表
  */
 export const list = () => {
   const data = {
-    clientName: Config.token_description,
-    clientToken: Config.token,
+    clientName: getLocalStorage(Config.client_name),
+    clientToken: getLocalStorage(Config.client_token),
     supperId: ''
   }
   return request.post<IApiNaireItem[]>('/api/form/getAllForms', data)

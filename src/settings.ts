@@ -48,13 +48,10 @@ export const Config = {
      */
   caseNumber: '津ICP备19006964号',
   /**
-     * 令牌
-     */
-  token: 'YWVzLTI1Ni1nY206Y0c5UGMwMXFRWGxOUXpCM1RWTXdlVTlUTUhoT1VWZFJZMUA1Mi4zOS45MC4yNjo1MjIxOQNv6RRuGEVvmGjB+jimI/gw==',
-  /**
      * 令牌描述
      */
-  token_description: 'iForms_GTA',
+  client_name: 'CLIENT_NAME',
+  client_token: 'CLIENT_TOKEN',
 
   jwt_token_name: 'IFORMS_JWT_TOKEN'
 }

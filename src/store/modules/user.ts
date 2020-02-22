@@ -5,7 +5,9 @@ import { Config } from '@/settings'
 
 interface LoginPayload {
   username: string,
-  token: string
+  token: string,
+  client_name: string,
+  client_token: string
 }
 
 export interface IUserState {
@@ -46,10 +48,12 @@ class User extends VuexModule implements IUserState {
 
   @Action
   public login (payload: LoginPayload) {
-    const { username, token } = payload
+    const { username, token, client_name, client_token } = payload
     setLocalStorage('IS_ADMIN', true) // 是否为管理员
     setLocalStorage('USER_NAME', username)
     setLocalStorage(Config.jwt_token_name, token)
+    setLocalStorage(Config.client_name, client_name)
+    setLocalStorage(Config.client_token, client_token)
     this.UPDATE_IS_ADMIN(true)
     this.UPDATE_USER_NAME(username)
     this.UPDATE_TOKEN(token)
