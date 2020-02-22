@@ -84,15 +84,11 @@ export default class extends Vue {
       const res = await AdminAction.changePwd(params)
       this.loading = false
       if (res.success) {
-        if (res.data > 0) {
-          this.$message.success('修改成功')
-          // 重置表单
-          this.handleReset()
-          UserModule.logout()
-          this.$router.push('/login')
-        } else {
-          this.$message.error('修改失败，请重试')
-        }
+        this.$message.success('修改成功')
+        // 重置表单
+        this.handleReset()
+        UserModule.logout()
+        this.$router.push('/login')
       } else {
         this.$message.error('修改失败，请重试')
       }

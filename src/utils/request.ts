@@ -76,7 +76,7 @@ service.interceptors.response.use(
             path: '/login',
             query: { redirect: router.currentRoute.fullPath }
           })
-          Message.error('Token 失效，请重新登录。')
+          err.message = 'Token失效或密码错误，请重新登录。'
           break
         case 403: err.message = '拒绝访问(403)'
           break
