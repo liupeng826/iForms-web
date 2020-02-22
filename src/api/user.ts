@@ -73,13 +73,14 @@ export const getClass = () => {
  * 用户列表
  * @param data
  */
-export const list = (data: {
+export const list = (criteria: {
   keyword: string,
-  value: string,
-  current: number,
-  page_size: number
+  value: string
+}, page: {
+  page: number,
+  size: number
 }) => {
-  return request.get<any>('/user', data)
+  return request.get<any>('/api/users', criteria, page)
 }
 
 /**

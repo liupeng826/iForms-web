@@ -38,17 +38,13 @@
     <div>
       <el-table :data="list" border @selection-change="onSelectionChange">
         <el-table-column type="selection" />
-        <el-table-column prop="u_number" label="工号" />
-        <el-table-column prop="u_name" label="姓名" />
-        <el-table-column prop="u_sex" label="性别">
-          <template slot-scope="{ row }">
-            {{ row.u_sex | sexFilter }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="u_class" label="部门" />
-        <el-table-column prop="u_identity" label="身份证号" />
-        <el-table-column prop="u_email" label="邮箱" />
-        <el-table-column prop="u_tel" label="手机号" />
+        <el-table-column prop="id" label="工号" />
+        <el-table-column prop="userName" label="姓名" />
+        <el-table-column prop="sex" label="性别" />
+        <el-table-column prop="deptId" label="部门" />
+        <el-table-column prop="roleId" label="权限" />
+        <el-table-column prop="email" label="邮箱" />
+        <el-table-column prop="phone" label="手机号" />
         <el-table-column label="操作" width="180">
           <template slot-scope="{ row }">
             <el-button type="primary" @click="handleEdit(row)">编辑</el-button>
@@ -65,8 +61,8 @@
 
     <div class="pagination">
       <el-pagination
-        :current-page.sync="pageParams.current"
-        :page-size="pageParams.page_size"
+        :current-page.sync="pageParams.page"
+        :page-size="pageParams.size"
         layout="prev, pager, next, jumper"
         :total="total"
         @current-change="onChangePage"
@@ -119,11 +115,11 @@ export default class extends Vue {
   private editUserVisible: boolean = false
   private selectContent: User.IUser[] = []
   private pageParams: {
-    current: number,
-    page_size: number
+    page: number,
+    size: number
   } = {
-    current: 1,
-    page_size: 10
+    page: 1,
+    size: 10
   }
   private total: number = 0
   public list: User.IUser[] = []
@@ -133,7 +129,7 @@ export default class extends Vue {
   }
 
   onChangePage (val: number) {
-    this.pageParams.current = val
+    this.pageParams.page = val
     this.fetchListData()
   }
 
@@ -218,14 +214,13 @@ export default class extends Vue {
 
   public async fetchListData () {
     this.loading = true
-    const res = await UserAction.list({
-      ...this.searchParams,
-      ...this.pageParams
-    })
+    const res = await UserAction.list(
+      this.searchParams,
+      this.pageParams)
     this.loading = false
     if (res.success) {
-      this.list = res.data.list
-      this.total = res.data.total
+      this.list = res.data
+      this.total = res.data.size
     } else {
       this.$message.error(res.msg)
     }
