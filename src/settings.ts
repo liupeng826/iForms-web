@@ -54,7 +54,7 @@ export const Config = {
   /**
      * 令牌描述
      */
-  token_description: 'iForms_web',
+  token_description: 'iForms_GTA',
 
   jwt_token_name: 'IFORMS_JWT_TOKEN'
 }

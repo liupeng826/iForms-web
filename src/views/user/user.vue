@@ -44,9 +44,9 @@
         <el-table-column prop="sex" label="性别" />
         <el-table-column prop="email" label="邮箱" />
         <el-table-column prop="phone" label="手机号" />
-        <el-table-column prop="client" label="客户端" />
-        <el-table-column prop="market" label="市场" />
-        <el-table-column prop="branch" label="分支机构" />
+        <el-table-column prop="client.name" label="客户端" />
+        <el-table-column prop="market.description" label="市场" />
+        <el-table-column prop="branch.name" label="分支机构" />
         <el-table-column prop="role" label="权限" />
         <el-table-column label="操作" width="180">
           <template slot-scope="{ row }">
