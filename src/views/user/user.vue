@@ -41,7 +41,11 @@
         <el-table-column prop="id" label="序号" />
         <el-table-column prop="userId" label="工号" />
         <el-table-column prop="userName" label="姓名" />
-        <el-table-column prop="sex" label="性别" />
+        <el-table-column prop="sex" label="性别">
+          <template slot-scope="{ row }">
+            {{ row.sex | sexFilter }}
+          </template>
+        </el-table-column>
         <el-table-column prop="email" label="邮箱" />
         <el-table-column prop="phone" label="手机号" />
         <el-table-column prop="client.name" label="客户端" />
@@ -101,15 +105,15 @@ export default class extends Vue {
     keyword: string,
     value: string
   } = {
-    keyword: 'u_name',
+    keyword: 'userName',
     value: ''
   }
   public searchOptions:ISearchOption[] = [
-    { value: 'u_name', label: '姓名' },
-    { value: 'u_number', label: '工号' },
-    { value: 'u_identity', label: '身份证号' },
-    { value: 'u_email', label: '邮箱' },
-    { value: 'u_tel', label: '手机号' }
+    { value: 'userName', label: '姓名' },
+    { value: 'userId', label: '工号' },
+    { value: 'client.name', label: '客户端' },
+    { value: 'market.description', label: '市场' },
+    { value: 'branch.name', label: '分支机构' }
   ]
   private editModel: User.IUser = {
     ...defaultUserData
@@ -189,7 +193,7 @@ export default class extends Vue {
   }
 
   public batchDelete () {
-    this.$confirm('您确认删除这几条内容吗？未选择任何项，则删除全部数据', '批量删除', {
+    this.$confirm('您确认删除这几条内容吗？', '批量删除', {
       type: 'warning'
     })
       .then(async () => {

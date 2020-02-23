@@ -1,15 +1,35 @@
 declare namespace User {
   export interface IUser {
-    u_id?: string,
-    u_number: string,
-    u_identity: string,
-    u_name: string,
-    u_nation: string,
-    u_birthday: string,
-    u_sex: string,
-    u_class: string,
-    u_email: string,
-    u_tel: string,
-    u_status?: string
+    id?: string,
+    userId: string,
+    userName: string,
+    sex: string,
+    email: string,
+    phone: string,
+    client: IClient,
+    market: IMarket,
+    branch: IBranch
+  }
+  export interface IClient {
+    id: string,
+    name: string,
+    token: string,
+    isActive: string
+  }
+  export interface IMarket {
+    id: string,
+    marketId: string,
+    isActive: string,
+    description: string
+  }
+  export interface IBranch {
+    id: string,
+    branchId: string,
+    name: string,
+    marketId: string,
+    email: string,
+    contactNo: string,
+    address: string,
+    isActive: string
   }
 }

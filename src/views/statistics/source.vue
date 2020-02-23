@@ -94,7 +94,7 @@ export default class extends Vue {
     const baseColumns = [
       {
         title: '姓名',
-        key: 'u_name',
+        key: 'userName',
         fixed: 'left',
         ellipsis: false,
         width: 100
@@ -106,7 +106,7 @@ export default class extends Vue {
       },
       {
         title: '工号',
-        key: 'u_number',
+        key: 'userId',
         width: 120
       }
     ]

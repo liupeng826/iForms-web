@@ -22,15 +22,12 @@ export const getId = (data: {
  * @param data
  */
 export const addUser = (data: {
-  u_name: string,
-  u_class: string,
-  u_number: string,
-  u_birthday: string,
-  u_nation: string,
-  u_tel: string,
-  u_email: string,
-  u_identity: string,
-  u_sex: string
+  userId: string,
+  userName: string,
+  sex: string,
+  email: string,
+  phone: string,
+  role: string
 }) => {
   return request.post<any>('/user/addUser', data, {
     headers: {
@@ -44,16 +41,12 @@ export const addUser = (data: {
  * @param data
  */
 export const updateUser = (data: {
-  u_id: string,
-  u_name: string,
-  u_class: string,
-  u_number: string,
-  u_birthday: string,
-  u_nation: string,
-  u_tel: string,
-  u_email: string,
-  u_identity: string,
-  u_sex: string
+  userId: string,
+  userName: string,
+  sex: string,
+  email: string,
+  phone: string,
+  role: string
 }) => {
   return request.post<any>('/user/updateUser', data, {
     headers: {

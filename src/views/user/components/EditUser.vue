@@ -1,69 +1,62 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" width="30%" title="修改截止时间">
+  <el-dialog :visible.sync="dialogVisible" width="30%" title="修改用户">
     <el-form
       ref="editUser"
       :model="form"
-      :rules="rules"
       label-position="left"
       label-width="80px"
       class="form"
     >
-      <el-form-item label="姓名" prop="u_name">
+      <el-form-item label="工号" prop="userId">
         <el-input
-          v-model="form.u_name"
+          v-model="form.userId"
           placeholder=""
         />
       </el-form-item>
-      <el-form-item label="部门" prop="u_class">
+      <el-form-item label="姓名" prop="userName">
         <el-input
-          v-model="form.u_class"
+          v-model="form.userName"
           placeholder=""
         />
       </el-form-item>
-      <el-form-item label="工号" prop="u_number">
-        <el-input
-          v-model="form.u_number"
-          placeholder=""
-        />
-      </el-form-item>
-      <el-form-item label="出生日期" prop="u_birthday">
-        <el-input
-          v-model="form.u_birthday"
-          placeholder="格式：20171001"
-        />
-      </el-form-item>
-      <el-form-item label="民族" prop="u_nation">
-        <el-input
-          v-model="form.u_nation"
-          placeholder=""
-        />
-      </el-form-item>
-      <el-form-item label="邮箱" prop="u_email">
-        <el-input
-          v-model="form.u_email"
-          placeholder=""
-        />
-      </el-form-item>
-      <el-form-item label="手机号" prop="u_tel">
-        <el-input
-          v-model="form.u_tel"
-          placeholder=""
-        />
-      </el-form-item>
-      <el-form-item label="身份证号" prop="u_identity">
-        <el-input
-          v-model="form.u_identity"
-          placeholder="如最后为字母，以大写结尾"
-        />
-      </el-form-item>
-      <el-form-item label="性别" prop="u_sex">
-        <el-radio-group v-model="form.u_sex">
+      <el-form-item label="性别" prop="sex">
+        <el-radio-group v-model="form.sex">
           <el-radio
             v-for="(item, index) in sexEnumMap"
             :key="index"
             :label="index"
           >{{ item }}</el-radio>
         </el-radio-group>
+      </el-form-item>
+      <el-form-item label="邮箱" prop="email">
+        <el-input
+          v-model="form.email"
+          placeholder=""
+        />
+      </el-form-item>
+      <el-form-item label="手机号" prop="phone">
+        <el-input
+          v-model="form.phone"
+          placeholder=""
+        />
+      </el-form-item>
+      <el-form-item label="客户端" prop="client.name">
+        <el-input
+          v-model="form.client.name"
+          placeholder=""
+        />
+      </el-form-item>
+      <el-form-item label="市场" prop="market.description">
+        <el-input
+          v-model="form.market.description"
+          placeholder=""
+        />
+      </el-form-item>
+      <el-form-item label="分支机构" prop="branch.name">
+        <el-input
+          v-model="form.branch.name"
+          placeholder=""
+        />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -92,35 +85,35 @@ export default class extends Vue {
     u_id: '',
     ...defaultUserData
   }
-  private rules: any = {
-    u_name: [
-      { required: true, message: '请输入姓名', trigger: 'blur' }
-    ],
-    u_class: [
-      { required: true, message: '请输入部门', trigger: 'blur' }
-    ],
-    u_number: [
-      { required: true, message: '请输入工号', trigger: 'blur' }
-    ],
-    u_birthday: [
-      { required: true, message: '请输入出生日期', trigger: 'blur' }
-    ],
-    u_nation: [
-      { required: true, message: '请输入民族', trigger: 'blur' }
-    ],
-    u_sex: [
-      { required: true, message: '请选择性别', trigger: 'change' }
-    ],
-    u_email: [
-      { type: 'email', required: true, message: '请输入邮箱地址', trigger: 'blur' }
-    ],
-    u_tel: [
-      { required: true, message: '请输入手机号', trigger: 'blur' }
-    ],
-    u_identity: [
-      { required: true, message: '请输入身份证号', trigger: 'blur' }
-    ]
-  }
+  // private rules: any = {
+  //   u_name: [
+  //     { required: true, message: '请输入姓名', trigger: 'blur' }
+  //   ],
+  //   u_class: [
+  //     { required: true, message: '请输入部门', trigger: 'blur' }
+  //   ],
+  //   u_number: [
+  //     { required: true, message: '请输入工号', trigger: 'blur' }
+  //   ],
+  //   u_birthday: [
+  //     { required: true, message: '请输入出生日期', trigger: 'blur' }
+  //   ],
+  //   u_nation: [
+  //     { required: true, message: '请输入民族', trigger: 'blur' }
+  //   ],
+  //   u_sex: [
+  //     { required: true, message: '请选择性别', trigger: 'change' }
+  //   ],
+  //   u_email: [
+  //     { type: 'email', required: true, message: '请输入邮箱地址', trigger: 'blur' }
+  //   ],
+  //   u_tel: [
+  //     { required: true, message: '请输入手机号', trigger: 'blur' }
+  //   ],
+  //   u_identity: [
+  //     { required: true, message: '请输入身份证号', trigger: 'blur' }
+  //   ]
+  // }
   private sexEnumMap = sexEnumMap
 
   @Watch('model')

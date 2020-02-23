@@ -10,13 +10,32 @@ export const defaultNaireData = {
 
 // 默认用户数据
 export const defaultUserData = {
-  u_number: '',
-  u_identity: '',
-  u_name: '',
-  u_nation: '',
-  u_birthday: '',
-  u_sex: '',
-  u_class: '',
-  u_email: '',
-  u_tel: ''
+  userId: '',
+  userName: '',
+  sex: '',
+  email: '',
+  phone: '',
+  role: '',
+  client: {
+    id: '',
+    name: '',
+    token: '',
+    isActive: ''
+  },
+  market: {
+    id: '',
+    marketId: '',
+    isActive: '',
+    description: ''
+  },
+  branch: {
+    id: '',
+    branchId: '',
+    name: '',
+    marketId: '',
+    email: '',
+    contactNo: '',
+    address: '',
+    isActive: ''
+  }
 }
