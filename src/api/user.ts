@@ -67,8 +67,7 @@ export const getClass = () => {
  * @param data
  */
 export const list = (criteria: {
-  keyword: string,
-  value: string
+  blurry: string
 }, page: {
   page: number,
   size: number

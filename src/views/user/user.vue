@@ -19,17 +19,7 @@
         </el-upload>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="searchParams.keyword" placeholder="搜索类别">
-          <el-option
-            v-for="(item, index) in searchOptions"
-            :key="index"
-            :value="item.value"
-            :label="item.label"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="searchParams.value" clearable placeholder="搜索内容" />
+        <el-input v-model="searchParams.blurry" style="width: 300px;" clearable placeholder="输入工号、名称或者邮箱搜索" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="ios-search" @click="fetchListData">搜索用户</el-button>
@@ -102,19 +92,10 @@ interface ISearchOption {
 export default class extends Vue {
   private loading: boolean = false
   private searchParams: {
-    keyword: string,
-    value: string
+    blurry: string
   } = {
-    keyword: 'userName',
-    value: ''
+    blurry: ''
   }
-  public searchOptions:ISearchOption[] = [
-    { value: 'userName', label: '姓名' },
-    { value: 'userId', label: '工号' },
-    { value: 'client.name', label: '客户端' },
-    { value: 'market.description', label: '市场' },
-    { value: 'branch.name', label: '分支机构' }
-  ]
   private editModel: User.IUser = {
     ...defaultUserData
   }
@@ -171,7 +152,7 @@ export default class extends Vue {
       type: 'warning'
     })
       .then(() => {
-        this.delUser(row.u_id || '')
+        this.delUser(row.id || '')
       })
       .catch(() => {})
   }
