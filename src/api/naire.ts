@@ -7,11 +7,13 @@ import { Config } from '@/settings'
  */
 export const list = () => {
   const data = {
-    clientName: Config.token_description,
-    clientToken: Config.token,
+    client: {
+      name: Config.token_description,
+      token: Config.token
+    },
     supperId: ''
   }
-  return request.post<IApiNaireItem[]>('/api/form/getAllForms', data)
+  return request.post<IApiNaireItem[]>('/api/form/getForms', data)
 }
 
 /**
