@@ -13,6 +13,9 @@
         <el-button type="primary" @click="addOption(questionType.SINGLE_CHOICE)">单选题</el-button>
         <el-button type="primary" @click="addOption(questionType.MULTIPLE_CHOICE)">多选题</el-button>
         <el-button type="primary" @click="addOption(questionType.TEXT_QUESTION)">文本题</el-button>
+        <el-button type="primary" @click="addOption(questionType.SYMBOL_SCORE)">符号评分题</el-button>
+        <el-button type="primary" @click="addOption(questionType.NET_PROMOTER_SCORE)">净推荐值题</el-button>
+        <el-button type="primary" @click="addOption(questionType.DATE_QUESTION)">日期题</el-button>
       </div>
 
       <question-list
@@ -159,6 +162,72 @@ export default class NavBar extends Vue {
           selectContent: ''
         }
         this.form.topic.push(textareaQues)
+        break
+      case questionType.SYMBOL_SCORE:
+        const radioQues2 = {
+          question: '单选题目',
+          options: [
+            {
+              content: '选项',
+              isAddition: false,
+              image: '',
+              desc: ''
+            }
+          ],
+          description: '',
+          type: '单选',
+          isRequired: true,
+          selectContent: '',
+          setting: {
+            last: 1
+          },
+          additional: ''
+        }
+        this.form.topic.push(radioQues2)
+        break
+      case questionType.NET_PROMOTER_SCORE:
+        const radioQues1 = {
+          question: '单选题目',
+          options: [
+            {
+              content: '选项',
+              isAddition: false,
+              image: '',
+              desc: ''
+            }
+          ],
+          description: '',
+          type: '单选',
+          isRequired: true,
+          selectContent: '',
+          setting: {
+            last: 1
+          },
+          additional: ''
+        }
+        this.form.topic.push(radioQues1)
+        break
+      case questionType.DATE_QUESTION:
+        const radioQues3 = {
+          question: '单选题目',
+          options: [
+            {
+              content: '选项',
+              isAddition: false,
+              image: '',
+              desc: ''
+            }
+          ],
+          description: '',
+          type: '单选',
+          isRequired: true,
+          selectContent: '',
+          setting: {
+            last: 1
+          },
+          additional: ''
+        }
+        this.form.topic.push(radioQues3)
         break
     }
   }
