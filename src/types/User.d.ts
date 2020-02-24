@@ -7,8 +7,7 @@ declare namespace User {
     email: string,
     phone: string,
     client: IClient,
-    market: IMarket,
-    branch: IBranch
+    dept: IDept
   }
   export interface IClient {
     id: string,
@@ -16,20 +15,12 @@ declare namespace User {
     token: string,
     isActive: string
   }
-  export interface IMarket {
+  export interface IDept {
     id: string,
-    marketId: string,
-    isActive: string,
-    description: string
-  }
-  export interface IBranch {
-    id: string,
-    branchId: string,
+    deptId: string,
     name: string,
-    marketId: string,
-    email: string,
-    contactNo: string,
-    address: string,
-    isActive: string
+    pid: string,
+    isActive: string,
+    createdDate: string
   }
 }

@@ -2,45 +2,23 @@
   <div v-loading.fullscreen.lock="loading">
     <el-form inline>
       <el-form-item>
-        <el-button type="primary" @click="addUser">新增用户</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-upload
-          :action="uploadUrl"
-          accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          name="userfile"
-          :show-upload-list="false"
-          :limit="1"
-          :on-exceeded="onUploadExceeded"
-          :on-success="onUploadSuccess"
-          :on-error="onUploadError"
-        >
-          <el-button plain icon="el-icon-upload el-icon--right">批量导入</el-button>
-        </el-upload>
+        <el-button type="primary" @click="addDept">新增部门</el-button>
       </el-form-item>
       <el-form-item>
         <el-input v-model="searchParams.blurry" style="width: 300px;" clearable placeholder="输入工号、名称或者邮箱搜索" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="ios-search" @click="fetchListData">搜索用户</el-button>
+        <el-button type="primary" icon="ios-search" @click="fetchListData">搜索部门</el-button>
       </el-form-item>
     </el-form>
     <div>
-      <el-table :data="list" @selection-change="onSelectionChange">
+      <el-table ref="table" :data="list" @selection-change="onSelectionChange">
         <el-table-column type="selection" />
         <el-table-column prop="id" label="序号" />
-        <el-table-column prop="userId" label="工号" />
-        <el-table-column prop="userName" label="姓名" />
-        <el-table-column prop="sex" label="性别">
-          <template slot-scope="{ row }">
-            {{ row.sex | sexFilter }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="email" label="邮箱" />
-        <el-table-column prop="phone" label="手机号" />
-        <el-table-column prop="client.name" label="客户端" />
-        <el-table-column prop="dept.name" label="分支机构" />
-        <el-table-column prop="role" label="权限" />
+        <el-table-column prop="name" label="名称" />
+        <el-table-column prop="deptId" label="ID" />
+        <el-table-column prop="isActive" label="状态" />
+        <el-table-column prop="createdDate" label="创建日期" />
         <el-table-column label="操作" width="180">
           <template slot-scope="{ row }">
             <el-button type="primary" @click="handleEdit(row)">编辑</el-button>
@@ -54,7 +32,6 @@
         <el-button type="warning" @click="clearAll">一键清空</el-button>
       </div>
     </div>
-
     <div class="pagination">
       <el-pagination
         :current-page.sync="pageParams.page"
@@ -65,17 +42,17 @@
       />
     </div>
 
-    <add-user :visible.sync="addUserVisible" @submit="fetchListData" />
-    <edit-user :visible.sync="editUserVisible" :model="editModel" @submit="fetchListData" />
+    <add-dept :visible.sync="addDeptVisible" @submit="fetchListData" />
+    <edit-dept :visible.sync="editDeptVisible" :model="editModel" @submit="fetchListData" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import * as UserAction from '@/api/user'
-import AddUser from '@/views/user/components/AddUser.vue'
-import EditUser from '@/views/user/components/EditUser.vue'
-import { defaultUserData } from '@/api/default'
+import * as DeptAction from '@/api/dept'
+import AddDept from '@/views/dept/components/AddDept.vue'
+import EditDept from '@/views/dept/components/EditDept.vue'
+import { defaultDeptData } from '@/api/default'
 
 interface ISearchOption {
   value: string,
@@ -84,23 +61,23 @@ interface ISearchOption {
 
 @Component({
   components: {
-    AddUser,
-    EditUser
+    AddDept,
+    EditDept
   }
 })
 export default class extends Vue {
   private loading: boolean = false
   private searchParams: {
-    blurry: string
+    ids: string[]
   } = {
-    blurry: ''
+    ids: []
   }
-  private editModel: User.IUser = {
-    ...defaultUserData
+  private editModel: User.IDept = {
+    ...defaultDeptData
   }
-  private addUserVisible: boolean = false
-  private editUserVisible: boolean = false
-  private selectContent: User.IUser[] = []
+  private addDeptVisible: boolean = false
+  private editDeptVisible: boolean = false
+  private selectContent: User.IDept[] = []
   private pageParams: {
     page: number,
     size: number
@@ -109,18 +86,14 @@ export default class extends Vue {
     size: 10
   }
   private total: number = 0
-  public list: User.IUser[] = []
-
-  get uploadUrl () {
-    return `${process.env.VUE_APP_BASE_API}/user/upload`
-  }
+  public list: User.IDept[] = []
 
   onChangePage (val: number) {
     this.pageParams.page = val
     this.fetchListData()
   }
 
-  onSelectionChange (val: User.IUser[]) {
+  onSelectionChange (val: User.IDept[]) {
     this.selectContent = val
   }
 
@@ -141,27 +114,27 @@ export default class extends Vue {
     this.$message.error('上传出错')
   }
 
-  handleEdit (row: User.IUser) {
+  handleEdit (row: User.IDept) {
     this.editModel = row
-    this.editUserVisible = true
+    this.editDeptVisible = true
   }
 
-  handleDelete (row: User.IUser) {
+  handleDelete (row: User.IDept) {
     this.$confirm('确认删除此用户吗？', '删除', {
       type: 'warning'
     })
       .then(() => {
-        this.delUser(row.id || '')
+        this.delDept(row.id || '')
       })
       .catch(() => {})
   }
 
-  public addUser () {
-    this.addUserVisible = true
+  public addDept () {
+    this.addDeptVisible = true
   }
 
-  private async delUser (nIds: string) {
-    const res = await UserAction.del({
+  private async delDept (nIds: string) {
+    const res = await DeptAction.del({
       u_id: nIds
     })
     if (res.success) {
@@ -178,7 +151,7 @@ export default class extends Vue {
     })
       .then(async () => {
         const rowIds = this.selectContent.map(({ id }) => id).join(',')
-        this.delUser(rowIds)
+        this.delDept(rowIds)
       })
       .catch(() => {})
   }
@@ -188,7 +161,7 @@ export default class extends Vue {
       type: 'warning'
     })
       .then(async () => {
-        const res = await UserAction.clear()
+        const res = await DeptAction.clear()
         if (res.success) {
           this.$message.success('清空用户成功')
           this.fetchListData()
@@ -201,9 +174,8 @@ export default class extends Vue {
 
   public async fetchListData () {
     this.loading = true
-    const res = await UserAction.list(
-      this.searchParams,
-      this.pageParams)
+    const res = await DeptAction.getDepts(
+      this.searchParams)
     this.loading = false
     if (res.success) {
       this.list = res.data

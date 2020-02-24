@@ -21,6 +21,11 @@ const navigations: NavMenu[] = [
     title: '创建问卷'
   },
   {
+    index: '/dept',
+    icon: 'el-icon-user-solid',
+    title: '部门管理'
+  },
+  {
     index: '/user',
     icon: 'el-icon-user-solid',
     title: '用户管理'

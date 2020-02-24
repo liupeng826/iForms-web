@@ -22,20 +22,22 @@ export const defaultUserData = {
     token: '',
     isActive: ''
   },
-  market: {
+  dept: {
     id: '',
-    marketId: '',
-    isActive: '',
-    description: ''
-  },
-  branch: {
-    id: '',
-    branchId: '',
+    deptId: '',
     name: '',
-    marketId: '',
     email: '',
     contactNo: '',
     address: '',
     isActive: ''
   }
+}
+export const defaultDeptData = {
+  id: '',
+  deptId: '',
+  name: '',
+  email: '',
+  contactNo: '',
+  address: '',
+  isActive: ''
 }

@@ -46,15 +46,9 @@
           placeholder=""
         />
       </el-form-item>
-      <el-form-item label="市场" prop="market.description">
+      <el-form-item label="分支机构" prop="dept.name">
         <el-input
-          v-model="form.market.description"
-          placeholder=""
-        />
-      </el-form-item>
-      <el-form-item label="分支机构" prop="branch.name">
-        <el-input
-          v-model="form.branch.name"
+          v-model="form.dept.name"
           placeholder=""
         />
       </el-form-item>

@@ -21,14 +21,14 @@ export const getId = (data: {
  * 添加用户
  * @param data
  */
-export const addUser = (data: {
+export const addDept = (data: {
   userId: string,
   userName: string,
   sex: string,
   email: string,
   phone: string
 }) => {
-  return request.post<any>('/user/addUser', data, {
+  return request.post<any>('/user/addDept', data, {
     headers: {
       'Content-Type': 'application/json; charset=UTF-8'
     }
@@ -39,14 +39,14 @@ export const addUser = (data: {
  * 添加用户
  * @param data
  */
-export const updateUser = (data: {
+export const updateDept = (data: {
   userId: string,
   userName: string,
   sex: string,
   email: string,
   phone: string
 }) => {
-  return request.post<any>('/user/updateUser', data, {
+  return request.post<any>('/user/updateDept', data, {
     headers: {
       'Content-Type': 'application/json; charset=UTF-8'
     }
@@ -64,13 +64,10 @@ export const getClass = () => {
  * 用户列表
  * @param data
  */
-export const list = (criteria: {
-  blurry: string
-}, page: {
-  page: number,
-  size: number
+export const getDepts = (criteria: {
+  ids: string[]
 }) => {
-  return request.get<any>('/api/users', criteria, page)
+  return request.get<any>('/api/dept', criteria)
 }
 
 /**

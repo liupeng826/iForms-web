@@ -1,54 +1,21 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" width="30%" title="修改用户">
+  <el-dialog :visible.sync="dialogVisible" width="30%" title="修改部门">
     <el-form
-      ref="editUser"
+      ref="editDept"
       :model="form"
       label-position="left"
       label-width="80px"
       class="form"
     >
-      <el-form-item label="工号" prop="userId">
+      <el-form-item label="ID" prop="deptId">
         <el-input
-          v-model="form.userId"
+          v-model="form.deptId"
           placeholder=""
         />
       </el-form-item>
-      <el-form-item label="姓名" prop="userName">
+      <el-form-item label="名称" prop="name">
         <el-input
-          v-model="form.userName"
-          placeholder=""
-        />
-      </el-form-item>
-      <el-form-item label="性别" prop="sex">
-        <el-radio-group v-model="form.sex">
-          <el-radio
-            v-for="(item, index) in sexEnumMap"
-            :key="index"
-            :label="index"
-          >{{ item }}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="邮箱" prop="email">
-        <el-input
-          v-model="form.email"
-          placeholder=""
-        />
-      </el-form-item>
-      <el-form-item label="手机号" prop="phone">
-        <el-input
-          v-model="form.phone"
-          placeholder=""
-        />
-      </el-form-item>
-      <el-form-item label="客户端" prop="client.name">
-        <el-input
-          v-model="form.client.name"
-          placeholder=""
-        />
-      </el-form-item>
-      <el-form-item label="分支机构" prop="dept.name">
-        <el-input
-          v-model="form.dept.name"
+          v-model="form.name"
           placeholder=""
         />
       </el-form-item>
@@ -62,22 +29,22 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import * as UserAction from '@/api/user'
+import * as DeptAction from '@/api/dept'
 import { sexEnumMap } from '@/config/enum/sex'
 import { ElForm } from 'element-ui/types/form'
-import { defaultUserData } from '@/api/default'
+import { defaultDeptData } from '@/api/default'
 
-interface IUserForm extends User.IUser{
+interface IDeptForm extends User.IDept{
   u_id: string
 }
 
 @Component
 export default class extends Vue {
   @Prop() visible!: boolean
-  @Prop() model!: IUserForm
-  private form: IUserForm = {
+  @Prop() model!: IDeptForm
+  private form: IDeptForm = {
     u_id: '',
-    ...defaultUserData
+    ...defaultDeptData
   }
   // private rules: any = {
   //   u_name: [
@@ -111,7 +78,7 @@ export default class extends Vue {
   private sexEnumMap = sexEnumMap
 
   @Watch('model')
-  watchModel (val: IUserForm) {
+  watchModel (val: IDeptForm) {
     this.form = val
   }
 
@@ -123,10 +90,10 @@ export default class extends Vue {
   }
 
   async submit () {
-    const ref = this.$refs.editUser as ElForm
+    const ref = this.$refs.editDept as ElForm
     ref.validate(async (valid: boolean) => {
       if (!valid) return
-      const res = await UserAction.updateUser({
+      const res = await DeptAction.updateDept({
         ...this.form
       })
       if (res.success) {

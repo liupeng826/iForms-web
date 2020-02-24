@@ -85,6 +85,12 @@ const routes: RouteConfig[] = [
         ]
       },
       {
+        path: 'dept',
+        name: 'dept',
+        component: () => import('@/views/dept/dept.vue'),
+        meta: { navIndex: '/dept', title: '部门管理' }
+      },
+      {
         path: 'user',
         name: 'user',
         component: () => import('@/views/user/user.vue'),
