@@ -12,7 +12,7 @@ declare namespace Questionnaire {
     last?: number
   }
 
-  export type QuestionType = '单选' | '多选' | '文本'
+  export type QuestionType = '单选' | '多选' | '文本' | '符号' | '净推荐值' | '日期'
 
   export interface IQuestionItem {
     q_id?: string,

@@ -20,9 +20,9 @@
         <el-button type="primary" @click="addOption(questionType.SINGLE_CHOICE)">单选题</el-button>
         <el-button type="primary" @click="addOption(questionType.MULTIPLE_CHOICE)">多选题</el-button>
         <el-button type="primary" @click="addOption(questionType.TEXT_QUESTION)">文本题</el-button>
-        <el-button type="primary" @click="addOption(questionType.SYMBOL_SCORE)">符号</el-button>
-        <el-button type="primary" @click="addOption(questionType.NET_PROMOTER_SCORE)">净推荐值</el-button>
-        <el-button type="primary" @click="addOption(questionType.DATE_QUESTION)">日期</el-button>
+        <el-button type="primary" @click="addOption(questionType.SYMBOL_SCORE)">符号评分题</el-button>
+        <el-button type="primary" @click="addOption(questionType.NET_PROMOTER_SCORE)">净推荐值题</el-button>
+        <el-button type="primary" @click="addOption(questionType.DATE_QUESTION)">日期题</el-button>
       </div>
 
       <question-list

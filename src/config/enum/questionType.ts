@@ -11,4 +11,4 @@ export enum questionType {
   DATE_QUESTION = '日期'
 }
 
-export type questionTypeText = '单选' | '多选' | '文本' | '符号' | '静推荐值' | '日期'
+export type questionTypeText = '单选' | '多选' | '文本' | '符号' | '净推荐值' | '日期'

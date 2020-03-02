@@ -165,7 +165,7 @@ export default class NavBar extends Vue {
         break
       case questionType.SYMBOL_SCORE:
         const radioQues2 = {
-          question: '单选题目',
+          question: '符号评分题',
           options: [
             {
               content: '选项',
@@ -175,7 +175,7 @@ export default class NavBar extends Vue {
             }
           ],
           description: '',
-          type: '单选',
+          type: '符号',
           isRequired: true,
           selectContent: '',
           setting: {
@@ -187,7 +187,7 @@ export default class NavBar extends Vue {
         break
       case questionType.NET_PROMOTER_SCORE:
         const radioQues1 = {
-          question: '单选题目',
+          question: '净推荐值题',
           options: [
             {
               content: '选项',
@@ -197,7 +197,7 @@ export default class NavBar extends Vue {
             }
           ],
           description: '',
-          type: '单选',
+          type: '净推荐值',
           isRequired: true,
           selectContent: '',
           setting: {
@@ -209,7 +209,7 @@ export default class NavBar extends Vue {
         break
       case questionType.DATE_QUESTION:
         const radioQues3 = {
-          question: '单选题目',
+          question: '日期题目',
           options: [
             {
               content: '选项',
@@ -219,7 +219,7 @@ export default class NavBar extends Vue {
             }
           ],
           description: '',
-          type: '单选',
+          type: '日期',
           isRequired: true,
           selectContent: '',
           setting: {
