@@ -44,7 +44,7 @@ export interface IApiNaireStatisticResult {
 // 结果统计
 export interface IApiAnswerStatisticResult {
   form: Questionnaire.IForm[],
-  answer: Questionnaire.IAnswer[]
+  answers: Questionnaire.IAnswer[]
 }
 
 // 用户信息
