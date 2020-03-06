@@ -34,6 +34,11 @@ const navigations: NavMenu[] = [
     index: '/setting',
     icon: 'el-icon-s-tools',
     title: '管理员设置'
+  },
+  {
+    index: '/test',
+    icon: 'el-icon-s-tools',
+    title: 'Test'
   }
 ]
 export default navigations

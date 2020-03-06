@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { IApiNaireSourceData, IApiNaireStatisticResult, IApiNaireItem } from './types'
+import { IApiNaireSourceData, IApiAnswerStatisticResult, IApiNaireItem } from './types'
 import { Config } from '@/settings'
 
 /**
@@ -36,9 +36,9 @@ export const create = (data: {
  * @param data
  */
 export const statis = (data: {
-  n_id: string
+  answerId: string
 }) => {
-  return request.post<IApiNaireStatisticResult>('/naire/statis', data, {
+  return request.get<IApiAnswerStatisticResult>('/api/form/answersWithForm', data, {
     headers: {
       'Content-Type': 'application/json; charset=UTF-8'
     }

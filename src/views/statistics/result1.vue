@@ -1,6 +1,67 @@
 <template>
   <div v-loading.fullscreen.lock="loading">
     <header-info :naire="naire" />
+
+    <div
+      v-for="(question, index) in questions"
+      :key="index"
+      class="question-list"
+    >
+      <div class="question-item">
+        <h3 class="title">Q{{ index + 1 }}: （{{ question.type }}）{{ question.question }}{{ question.isRequired ? '（必填）' : '（选填）' }}
+          <el-button type="primary" @click="downloadXls(index)">导出选项数据</el-button>
+        </h3>
+        <p class="description">{{ question.description }}</p>
+      </div>
+      <el-table
+        v-if="question.type === questionType.SINGLE_CHOICE || question.type === questionType.MULTIPLE_CHOICE"
+        class="result-table border-table"
+        :data="question.options"
+      >
+        <el-table-column prop="content" label="选项" />
+        <el-table-column prop="count" label="小计" align="center" />
+        <el-table-column prop="percent" label="百分比(%)" align="center" />
+      </el-table>
+      <div v-if="question.type === questionType.TEXT_QUESTION">
+        <el-alert
+          v-if="question.answerList.length > 100"
+          class="overload-tip"
+          type="warning"
+        >
+          为了避免渲染性能问题，当数据超过100行后将不再这里显示，可导出选项数据后查看。
+        </el-alert>
+        <el-table
+          class="result-table border-table"
+          height="400"
+          :data="question.partOfAnswerList"
+        >
+          <el-table-column type="index" label="编号" width="80" align="center" />
+          <el-table-column prop="userNumber" label="工号" align="center" width="150" />
+          <el-table-column prop="userName" label="姓名" align="center" width="150" />
+          <el-table-column prop="content" label="提交内容" />
+        </el-table>
+      </div>
+      <p v-if="question.type === questionType.SINGLE_CHOICE && question.addtionContent.length > 0">附加理由列表：</p>
+      <el-table
+        v-if="question.type === questionType.SINGLE_CHOICE && question.addtionContent.length > 0"
+        class="result-table border-table"
+        height="200"
+        :data="question.addtionContent"
+      >
+        <el-table-column type="index" label="编号" width="80" align="center" />
+        <el-table-column prop="content" label="附加理由" />
+      </el-table>
+      <!-- 图表，跟随内容变高 -->
+      <div
+        v-if="question.type === questionType.SINGLE_CHOICE || question.type === questionType.MULTIPLE_CHOICE"
+        class="echarts"
+      >
+        <div
+          :id="'chart-'+ question.q_id"
+          :style="{ width: '100%', height: question.options.length * 40 + 50 + 'px' }"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -28,8 +89,7 @@ interface StatisticQuestionItem extends Questionnaire.IQuestionItem {
 })
 export default class StatisticsComponent extends Vue {
   private loading: boolean = false
-  private answers: Questionnaire.IAnswer[] | null = null
-  private forms: Questionnaire.IForm[] | null = null
+  private naire: Questionnaire.INaire | null = null
   private questions: any[] = []
   private chartsOptions: any = {}
   private questionType = questionType
@@ -155,14 +215,12 @@ export default class StatisticsComponent extends Vue {
   async fetchData () {
     this.loading = true
     const res = await NaireAction.statis({
-      // answerId: this.$route.params.id
-      // TODO: for test purpose to use mock data for the time being
-      answerId: '26d1e6b5d7cf429281f47b33482fd103'
+      n_id: this.$route.params.id
     })
     this.loading = false
     if (res.success) {
-      this.forms = res.data!.form
-      this.answers = res.data!.answer.map((item) => {
+      this.naire = res.data!.naire
+      this.questions = res.data!.questions.map((item) => {
         return {
           ...item,
           partOfAnswerList: item.type === questionType.TEXT_QUESTION ? item.answerList.slice(0, 100) : []

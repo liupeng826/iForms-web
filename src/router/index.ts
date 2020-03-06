@@ -101,6 +101,12 @@ const routes: RouteConfig[] = [
         name: 'setting',
         component: () => import('@/views/setting/setting.vue'),
         meta: { navIndex: '/setting', title: '管理员设置' }
+      },
+      {
+        path: 'test',
+        name: 'test',
+        component: () => import('@/views/test/test.vue'),
+        meta: { navIndex: '/test', title: 'Test' }
       }
     ]
   },

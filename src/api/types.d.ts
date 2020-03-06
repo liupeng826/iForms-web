@@ -41,6 +41,12 @@ export interface IApiNaireStatisticResult {
   questions: IApiQuestionItem[]
 }
 
+// 结果统计
+export interface IApiAnswerStatisticResult {
+  form: Questionnaire.IForm[],
+  answer: Questionnaire.IAnswer[]
+}
+
 // 用户信息
 export interface IApiUserInfo {
   u_id: string,

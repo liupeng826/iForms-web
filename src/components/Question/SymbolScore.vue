@@ -48,6 +48,18 @@
             />
           </el-col>
         </el-row>
+        <el-row>
+          <el-col :span="18">
+            <el-form-item label="描述">
+              <el-input
+                v-model="option.desc"
+                type="textarea"
+                :autosize="{ minRows: 2,maxRows: 5 }"
+                placeholder="请输入选项描述"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row style="margin-bottom: 5px">
           <el-col :span="18">
             <el-form-item label="图片">
@@ -58,6 +70,21 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <div class="option-addtion">
+          <el-form-item
+            label="附加内容："
+            :prop="'topic.' + index + '.options.' + opIndex + '.isAddition'"
+            :rules="{
+              required: true, message: '选项内容不能为空', trigger: 'blur'
+            }"
+          >
+            <el-switch
+              v-model="option.isAddition"
+              active-text="有"
+              inactive-text="无"
+            />
+          </el-form-item>
+        </div>
       </div>
     </el-form-item>
     <el-form-item
