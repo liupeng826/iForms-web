@@ -28,7 +28,7 @@ export const addUser = (data: {
   email: string,
   phone: string
 }) => {
-  return request.post<any>('/user/addUser', data, {
+  return request.post<any>('/api/v1/user/addUser', data, {
     headers: {
       'Content-Type': 'application/json; charset=UTF-8'
     }
@@ -46,7 +46,7 @@ export const updateUser = (data: {
   email: string,
   phone: string
 }) => {
-  return request.post<any>('/user/updateUser', data, {
+  return request.post<any>('/api/v1/user/updateUser', data, {
     headers: {
       'Content-Type': 'application/json; charset=UTF-8'
     }
@@ -57,7 +57,7 @@ export const updateUser = (data: {
  * 获取部门信息
  */
 export const getClass = () => {
-  return request.get<IApiClassItem[]>('/user/getClass')
+  return request.get<IApiClassItem[]>('/api/v1/user/getClass')
 }
 
 /**
@@ -70,7 +70,7 @@ export const list = (criteria: {
   page: number,
   size: number
 }) => {
-  return request.get<any>('/api/users', criteria, page)
+  return request.get<any>('/api/v1/users', criteria, page)
 }
 
 /**
@@ -80,12 +80,12 @@ export const list = (criteria: {
 export const del = (data: {
   u_id: string
 }) => {
-  return request.post<any>('/user/del', data)
+  return request.post<any>('/api/v1/user/del', data)
 }
 
 /**
  * 清空用户
  */
 export const clear = () => {
-  return request.post<any>('/user/clear')
+  return request.post<any>('/api/v1/user/clear')
 }

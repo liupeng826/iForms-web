@@ -10,7 +10,7 @@ export const getId = (data: {
   name: string,
   identity: string
 }) => {
-  return request.post<IApiUserInfo>('/user/getId', data, {
+  return request.post<IApiUserInfo>('/api/v1/user/getId', data, {
     headers: {
       'Content-Type': 'application/json; charset=UTF-8'
     }
@@ -28,7 +28,7 @@ export const addDept = (data: {
   email: string,
   phone: string
 }) => {
-  return request.post<any>('/user/addDept', data, {
+  return request.post<any>('/api/v1/user/addDept', data, {
     headers: {
       'Content-Type': 'application/json; charset=UTF-8'
     }
@@ -46,7 +46,7 @@ export const updateDept = (data: {
   email: string,
   phone: string
 }) => {
-  return request.post<any>('/user/updateDept', data, {
+  return request.post<any>('/api/v1/user/updateDept', data, {
     headers: {
       'Content-Type': 'application/json; charset=UTF-8'
     }
@@ -57,7 +57,7 @@ export const updateDept = (data: {
  * 获取部门信息
  */
 export const getClass = () => {
-  return request.get<IApiClassItem[]>('/user/getClass')
+  return request.get<IApiClassItem[]>('/api/v1/user/getClass')
 }
 
 /**
@@ -67,7 +67,7 @@ export const getClass = () => {
 export const getDepts = (criteria: {
   ids: string[]
 }) => {
-  return request.get<any>('/api/dept', criteria)
+  return request.get<any>('/api/v1/dept', criteria)
 }
 
 /**
@@ -77,12 +77,12 @@ export const getDepts = (criteria: {
 export const del = (data: {
   u_id: string
 }) => {
-  return request.post<any>('/user/del', data)
+  return request.post<any>('/api/v1/user/del', data)
 }
 
 /**
  * 清空用户
  */
 export const clear = () => {
-  return request.post<any>('/user/clear')
+  return request.post<any>('/api/v1/user/clear')
 }

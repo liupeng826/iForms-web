@@ -12,7 +12,7 @@ export interface ICode {
 }
 
 export const getCodeImg = () => {
-  return request.get<any>('auth/code')
+  return request.get<any>('/api/v1/auth/code')
 }
 
 export function login (data: {
@@ -20,7 +20,7 @@ export function login (data: {
   password: string
 }) {
   data.password = encrypt(data.password)
-  return request.post<IToken>('/auth/login', data)
+  return request.post<IToken>('/api/v1/auth/login', data)
 }
 
 export function changePwd (data: {
@@ -29,5 +29,5 @@ export function changePwd (data: {
 }) {
   data.oldPass = encrypt(data.oldPass)
   data.newPass = encrypt(data.newPass)
-  return request.post<any>('/api/users/updatePass', data)
+  return request.post<any>('/api/v1/users/updatePass', data)
 }

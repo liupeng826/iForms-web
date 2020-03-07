@@ -13,7 +13,7 @@ export const list = () => {
     },
     supperId: ''
   }
-  return request.post<IApiNaireItem[]>('/api/form/getForms', data)
+  return request.post<IApiNaireItem[]>('/api/v1/form/getForms', data)
 }
 
 /**
@@ -24,7 +24,7 @@ export const create = (data: {
   naire: Questionnaire.INaire,
   status: string
 }) => {
-  return request.post<any>('/naire/save', data, {
+  return request.post<any>('/api/v1/naire/save', data, {
     headers: {
       'Content-Type': 'application/json; charset=UTF-8'
     }
@@ -38,7 +38,7 @@ export const create = (data: {
 export const statis = (data: {
   answerId: string
 }) => {
-  return request.get<IApiAnswerStatisticResult>('/api/form/answersWithForm', data, {
+  return request.get<IApiAnswerStatisticResult>('/api/v1/form/answersWithForm', data, {
     headers: {
       'Content-Type': 'application/json; charset=UTF-8'
     }
@@ -55,7 +55,7 @@ export const sourceData = (data: {
   current: number,
     page_size: number
 }) => {
-  return request.get<IApiNaireSourceData>('/naire/sourcedata', data)
+  return request.get<IApiNaireSourceData>('/api/v1/naire/sourcedata', data)
 }
 
 /**
