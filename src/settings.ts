@@ -24,10 +24,6 @@ export const Config = {
      */
   uniqueOpened: true,
   /**
-     * @description token key
-     */
-  TokenKey: 'V-ADMIN-TOEKN',
-  /**
      * @description 请求超时时间，毫秒（默认2分钟）
      */
   timeout: 1200000,

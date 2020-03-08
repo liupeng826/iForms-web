@@ -2,7 +2,8 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { UserModule } from '@/store/modules/user'
 import router from '@/router'
 import { Notification, MessageBox, Message } from 'element-ui'
-import { getLocalStorage } from '@/utils/storage'
+import { getLocalStorage, setLocalStorage } from '@/utils/storage'
+import { getToken } from '@/utils/auth'
 import { Config } from '@/settings'
 
 type IAxiosResponse<T> = Request.IAxiosResponse<T>
@@ -17,10 +18,18 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 判断是否存在token，如果存在的话，则每个http header都加上token
-    const jwtToken = getLocalStorage(Config.jwt_token_name)
+    let jwtToken = getLocalStorage(Config.jwt_token_name)
+    if (jwtToken) {
+      config.headers.Authorization = jwtToken
+    } else {
+      jwtToken = getToken()
+      setLocalStorage(Config.jwt_token_name, jwtToken)
+    }
+
     if (jwtToken) {
       config.headers.Authorization = jwtToken
     }
+
     config.headers['Content-Type'] = 'application/json'
     return config
   },
