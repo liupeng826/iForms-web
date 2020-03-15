@@ -35,16 +35,25 @@ export interface IApiNaireItem {
   n_id: string
 }
 
-// 结果通统计
+// 结果统计
 export interface IApiNaireStatisticResult {
   naire: Questionnaire.INaire,
   questions: IApiQuestionItem[]
 }
 
 // 结果统计
+// export interface IApiAnswerStatisticResult {
+//   form: Questionnaire.IForm[],
+//   answers: Questionnaire.IAnswer[]
+// }
+
+/* IApiAnswerStatisticResult */
 export interface IApiAnswerStatisticResult {
-  form: Questionnaire.IForm[],
-  answers: Questionnaire.IAnswer[]
+  code: string;
+  message: string;
+  data: Questionnaire.IOptionCount[];
+  // answers: Questionnaire.IAnswer[];
+  // optionCounts: Questionnaire.IOptionCount[];
 }
 
 // 用户信息

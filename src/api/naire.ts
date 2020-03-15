@@ -36,9 +36,20 @@ export const create = (data: {
  * @param data
  */
 export const statis = (data: {
-  answerId: string
+    client: {
+       id: number,
+       name: string,
+       token: string,
+       isActive: number
+    },
+    dealerId: string,
+    formId: number,
+    from: number,
+    marketId: string,
+    month: number,
+    to: number
 }) => {
-  return request.get<IApiAnswerStatisticResult>('/api/v1/form/answersWithForm', data, {
+  return request.post<IApiAnswerStatisticResult>('/api/v1/form/AnswerOptionsStatistics', data, {
     headers: {
       'Content-Type': 'application/json; charset=UTF-8'
     }

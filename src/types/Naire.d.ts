@@ -13,6 +13,7 @@ declare namespace Questionnaire {
   }
 
   export type QuestionType = '单选' | '多选' | '文本' | '符号' | '净推荐值' | '日期'
+  export type QuestionTypeId = 1 | 2 | 3 | 4 | 5 | 6
 
   export interface IQuestionItem {
     q_id?: string,
@@ -24,7 +25,7 @@ declare namespace Questionnaire {
     additional?: string,
     selectContent?: string,
     selectMultipleContent?: number[],
-    type: string
+    type: number
   }
 
   export interface IOptionItem {
@@ -35,25 +36,6 @@ declare namespace Questionnaire {
     isAddition: boolean
   }
 
-  export interface IAnswer {
-    answerId: string,
-    id: number,
-    formId: number,
-    questionId: number,
-    answerDescription?: string,
-    answerOptionId?: number,
-    answerValue?: string,
-    totalValue?: string,
-    reference?: string,
-    createdBy?: string,
-    createdDate?: string,
-    modifiedBy?: string,
-    modifiedDate?: string,
-    customerId?: string,
-    customer?: ICustomer,
-    language?: string
-  }
-
   export interface ICustomer {
     id: number,
     name: string,
@@ -61,66 +43,108 @@ declare namespace Questionnaire {
     contactNo?: string
   }
 
-  export interface IForm {
-    superFormId: string,
-    id: number,
-    title: string,
-    description?: string,
-    level?: string,
-    marketId?: number,
-    deptId?: number,
-    client?: null,
-    sendEmail?: string,
-    type?: string,
-    isActive?: boolean,
-    publishStatus?: boolean,
-    createdBy?: string,
-    createdDate?: string,
-    modifiedBy?: string,
-    modifiedDate?: string,
-    language?: string,
-    languageDescription?: string,
-    deadline?: string,
-    includeSection?: string,
-    sections?: ISection[]
+  /* Data */
+  export interface IData {
+    superFormId: string;
+    id: number;
+    title: string;
+    description: string;
+    level: string;
+    marketId: string;
+    deptId: string;
+    client?: string;
+    sendEmail: number;
+    type: string;
+    isActive: number;
+    publishStatus: number;
+    createdBy: string;
+    createdDate: number;
+    modifiedBy: string;
+    modifiedDate: number;
+    language: string;
+    languageDescription: string;
+    deadline?: string;
+    includeSection: number;
+    sections: ISection[];
+    answers: IAnswer[];
   }
 
+  /* Sections */
   export interface ISection {
-    id: number,
-    formId: number,
-    title?: string,
-    description?: string,
-    sequence?: number,
-    isActive?: boolean,
-    questions?: IQuestion[]
+    id: number;
+    formId: number;
+    title?: string;
+    description?: string;
+    sequence?: number;
+    isActive?: number;
+    questions?: IQuestion[];
   }
 
-  export interface IQuestion {
-    id: 89,
-    sectionId: 5,
-    title: string,
-    subtitle: string,
-    questionTypeId: 2,
-    isActive: boolean,
-    createdBy?: string,
-    createdDate?: string,
-    modifiedBy?: string,
-    modifiedDate?: string,
-    language?: string,
-    mandatory?: boolean,
-    sequence?: number,
-    questionOptions?: IQuestionOption[]
-  }
-
+  /* QuestionOptions */
   export interface IQuestionOption {
-    id: number,
-    questionId: number,
-    description?: string,
-    sequence?: number,
-    totalValue?: 0,
-    netPromoterFrom?: string,
-    netPromoterTo?: string,
-    language?: string,
-    isActive?: boolean
+    id: number;
+    questionId: number;
+    description: string;
+    sequence: number;
+    totalValue: number;
+    netPromoterFrom?: string;
+    netPromoterTo?: string;
+    language?: string;
+    isActive: number;
+  }
+
+  /* Questions */
+  export interface IQuestion {
+    id: number;
+    sectionId: number;
+    title: string;
+    subtitle: string;
+    questionTypeId: number;
+    isActive: number;
+    createdBy?: string;
+    createdDate?: string;
+    modifiedBy?: string;
+    modifiedDate?: string;
+    language?: string;
+    mandatory: number;
+    sequence: number;
+    questionOptions: IQuestionOption[];
+  }
+
+  /* Answers */
+  export interface IAnswer {
+    answerId: string;
+    id: number;
+    formId: number;
+    questionId: number;
+    answerDescription?: string;
+    answerOptionId: number;
+    answerValue?: string;
+    totalValue?: string;
+    reference?: string;
+    createdBy?: string;
+    createdDate?: string;
+    modifiedBy?: string;
+    modifiedDate?: string;
+    customerId?: number;
+    customer?: string;
+    language?: string;
+  }
+
+  export interface IOptionCount {
+    optionQuestionId: number;
+    questionTypeId: number;
+    optionDescription?: string;
+    answerValue?: number;
+    totalNumber: number;
+    netPromoterFrom?: string;
+    netPromoterTo?: string;
+  }
+
+  export interface IQuestionAnswer {
+    questionId: number;
+    questionTypeId: number;
+    optionDescriptions: string[];
+    totalNumber: number[];
   }
 }

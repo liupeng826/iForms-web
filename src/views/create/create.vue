@@ -13,7 +13,7 @@
         <el-button type="primary" @click="addOption(questionType.SINGLE_CHOICE)">单选题</el-button>
         <el-button type="primary" @click="addOption(questionType.MULTIPLE_CHOICE)">多选题</el-button>
         <el-button type="primary" @click="addOption(questionType.TEXT_QUESTION)">文本题</el-button>
-        <el-button type="primary" @click="addOption(questionType.SYMBOL_SCORE)">符号评分题</el-button>
+        <el-button type="primary" @click="addOption(questionType.Rating)">符号评分题</el-button>
         <el-button type="primary" @click="addOption(questionType.NET_PROMOTER_SCORE)">净推荐值题</el-button>
         <el-button type="primary" @click="addOption(questionType.DATE_QUESTION)">日期题</el-button>
       </div>
@@ -163,7 +163,7 @@ export default class NavBar extends Vue {
         }
         this.form.topic.push(textareaQues)
         break
-      case questionType.SYMBOL_SCORE:
+      case questionType.Rating:
         const radioQues2 = {
           question: '符号评分题',
           options: [
