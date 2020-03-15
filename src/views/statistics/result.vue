@@ -261,12 +261,13 @@ export default class StatisticsComponent extends Vue {
         formatter: '{c}%'
       },
       legend: {
-        data: this.chartsOptions[index].optionDescription // ['0~5 mins', '5~10 mins', '>10 mins']
+        data: this.chartsOptions[index].optionDescription,
+        bottom: 'bottom'
       },
       grid: {
         left: '3%',
         right: '4%',
-        bottom: '3%',
+        // bottom: '10%',
         containLabel: true
       },
       xAxis: {
@@ -279,7 +280,8 @@ export default class StatisticsComponent extends Vue {
         type: 'category',
         data: ['']
       },
-      series: series
+      series: series,
+      color: ['rgb(79,172,91)', 'rgb(223,130,68)', 'rgb(165,164,165)', 'rgb(245,193,67)', 'rgb(78,114,190)']
     }
     chart.setOption(option)
   }
