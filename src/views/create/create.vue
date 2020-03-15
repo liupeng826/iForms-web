@@ -163,7 +163,7 @@ export default class NavBar extends Vue {
         }
         this.form.topic.push(textareaQues)
         break
-      case questionType.Rating:
+      case questionType.RATING:
         const radioQues2 = {
           question: '符号评分题',
           options: [

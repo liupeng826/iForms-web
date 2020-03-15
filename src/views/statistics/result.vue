@@ -10,6 +10,29 @@
         No Data Found
       </el-alert>
     </div>
+    <div class="naire-btn">
+      <el-select v-model="defaultMarket" placeholder="SELECT MARKET">
+        <el-option
+          v-for="item in allMarkets"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+      <el-select v-model="defaultDealer" placeholder="SELECT DEALER">
+        <el-option
+          v-for="item in dealers"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+      <el-date-picker
+        v-model="defaultMonth"
+        type="month"
+        placeholder="SELECT MONTH"
+      />
+    </div>
     <div class="header">
       <h1>{{ optionCounts[0].formTitle }}</h1>
     </div>
@@ -90,6 +113,20 @@ export default class StatisticsComponent extends Vue {
   private questionAnswers: Questionnaire.IQuestionAnswer[] = []
   private chartsOptions: any = [];
   private questionType = questionType1;
+  private allMarkets: any =
+    [{
+      value: '1',
+      label: 'Malaysia'
+    }, {
+      value: '2',
+      label: 'Singapore'
+    }, {
+      value: '3',
+      label: 'Thailand'
+    }];
+  private defaultMarket = '';
+  private defaultDealer = '';
+  private defaultMonth = '';
 
   getChartsData (optionCounts: any[]) {
     // this.drawChart(0)
@@ -306,12 +343,12 @@ export default class StatisticsComponent extends Vue {
     })
     this.loading = false
     if (res.success) {
-    //   this.optionCounts = res.data!.map(item => {
-    //     return {
-    //       ...item
-    //       // partOfAnswerList: item.type === questionType.TEXT_QUESTION ? item.answerList.slice(0, 100) : []
-    //     }
-    //   })
+      //   this.optionCounts = res.data!.map(item => {
+      //     return {
+      //       ...item
+      //       // partOfAnswerList: item.type === questionType.TEXT_QUESTION ? item.answerList.slice(0, 100) : []
+      //     }
+      //   })
       this.optionCounts = res.data!
       this.getChartsData(res.data!)
     } else {
@@ -369,6 +406,14 @@ export default class StatisticsComponent extends Vue {
 .right {
   width: 50%;
   float: right
+}
+
+.el-select + .el-select {
+  margin-left: 15px;
+}
+
+.el-select + .el-date-editor {
+  margin-left: 15px;
 }
 
 .header {
