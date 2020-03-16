@@ -56,6 +56,13 @@ export interface IApiAnswerStatisticResult {
   // optionCounts: Questionnaire.IOptionCount[];
 }
 
+/* */
+export interface IApiSubmittingStatisticResult {
+  code: string;
+  message: string;
+  data: Questionnaire.IMonthlyCount[];
+}
+
 // 用户信息
 export interface IApiUserInfo {
   u_id: string,

@@ -57,6 +57,31 @@ export const statis = (data: {
 }
 
 /**
+ * 问卷统计
+ * @param data
+ */
+export const statis2 = (data: {
+  client: {
+     id: number,
+     name: string,
+     token: string,
+     isActive: number
+  },
+  dealerId: string,
+  formId: number,
+  from: number,
+  marketId: string,
+  month: number,
+  to: number
+}) => {
+  return request.post<IApiAnswerStatisticResult>('/api/v1/form/AnswerStatistics', data, {
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8'
+    }
+  })
+}
+
+/**
  * 样本数据
  * @param data
  */

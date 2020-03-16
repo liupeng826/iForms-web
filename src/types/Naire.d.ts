@@ -147,4 +147,17 @@ declare namespace Questionnaire {
     optionDescriptions: string[];
     totalNumber: number[];
   }
+
+  export interface IMonthlyCount {
+    superFormId: string,
+    formTitle: string,
+    optionQuestionId?: number,
+    questionTypeId?: number,
+    optionDescription?: string,
+    answerValue?: string,
+    totalNumber: number,
+    netPromoterFrom?: null,
+    netPromoterTo?: null,
+    month: Date
+  }
 }

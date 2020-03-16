@@ -10,7 +10,7 @@
         No Data Found
       </el-alert>
     </div>
-    <div class="naire-btn">
+    <div class="naire-search-panel">
       <el-select v-model="defaultMarket" placeholder="SELECT MARKET">
         <el-option
           v-for="item in allMarkets"
@@ -63,6 +63,16 @@
         />
       </div>
     </div>
+    <div
+      :class="chartsOptions.length % 2 === 0 ? 'question-list left': 'question-list right'"
+    >
+      <div class="echarts">
+        <div
+          id="chart-monthly-report"
+          :class="chartsOptions.length % 2 === 0 ? 'chart-left': 'chart-right'"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -110,8 +120,9 @@ export default class StatisticsComponent extends Vue {
   // private answers: Questionnaire.IAnswer[] = [];
   // private sections: Questionnaire.ISection[] | null = null;
   private optionCounts: Questionnaire.IOptionCount[] = [];
-  private questionAnswers: Questionnaire.IQuestionAnswer[] = []
+  private monthlyCounts: Questionnaire.IMonthlyCount[] = []
   private chartsOptions: any = [];
+  private chartsOptionsForMonthlyCount: any = [];
   private questionType = questionType1;
   private allMarkets: any =
     [{
@@ -129,9 +140,7 @@ export default class StatisticsComponent extends Vue {
   private defaultMonth = '';
 
   getChartsData (optionCounts: any[]) {
-    // this.drawChart(0)
-    // this.drawChart(1)
-    optionCounts.forEach((item: Questionnaire.IOptionCount, quesIndex: number) => {
+    this.optionCounts.forEach((item: Questionnaire.IOptionCount, quesIndex: number) => {
       if (
         item.questionTypeId === questionType1.SINGLE_CHOICE ||
         item.questionTypeId === questionType1.MULTIPLE_CHOICE ||
@@ -264,6 +273,13 @@ export default class StatisticsComponent extends Vue {
     })
   }
 
+  getChartsDataForMonthlyCount (monthlyCounts: any[]) {
+    this.monthlyCounts.forEach((item: Questionnaire.IMonthlyCount, index: number) => {
+    })
+
+    this.$nextTick(() => this.drawChartForMonthlyCount())
+  }
+
   drawChart (index: number) {
     const element = document.getElementById('chart-' + index) as HTMLDivElement
     const chart = echarts.init(element)
@@ -278,7 +294,7 @@ export default class StatisticsComponent extends Vue {
       series.push({
         name: e,
         type: 'bar',
-        stack: '总量',
+        stack: 'total',
         label: {
           show: true,
           position: 'inside',
@@ -323,6 +339,58 @@ export default class StatisticsComponent extends Vue {
     chart.setOption(option)
   }
 
+  drawChartForMonthlyCount () {
+    const element = document.getElementById('chart-monthly-report') as HTMLDivElement
+    if (element == null) console.log('chart-monthly-report is null')
+    const chart1 = echarts.init(element)
+    var yAxis = {
+      type: 'category',
+      data: []
+    }
+
+    var series = {
+      name: 'Total Numbers',
+      type: 'bar',
+      data: []
+    }
+
+    this.monthlyCounts.reverse().slice(0, 3).forEach((item: Questionnaire.IMonthlyCount, index: number) => {
+      yAxis.data.push(item.month)
+      series.data.push(Number(item.totalNumber))
+    })
+
+    var option1 = {
+      title: {
+        text: this.monthlyCounts[0].formTitle
+        // subtext: 'Market'
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      legend: {
+        data: ['Total Numbers'],
+        bottom: 'bottom'
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        // bottom: '10%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'value',
+        boundaryGap: [0, 0.001]
+      },
+      yAxis: yAxis,
+      series: series
+    }
+
+    chart1.setOption(option1)
+  }
+
   async fetchData () {
     this.loading = true
     const res = await NaireAction.statis({
@@ -336,10 +404,10 @@ export default class StatisticsComponent extends Vue {
       },
       dealerId: '', // 703518
       formId: 47,
-      from: 1402459763000, // 2019-03-13 14:49:23
+      from: 1402459763000,
       marketId: '9999',
       month: 2,
-      to: 1604082375869 // 2020-03-13 14:52:55
+      to: 1604082375869
     })
     this.loading = false
     if (res.success) {
@@ -352,13 +420,40 @@ export default class StatisticsComponent extends Vue {
       this.optionCounts = res.data!
       this.getChartsData(res.data!)
     } else {
-      this.$message.error('获取结果统计失败。')
+      this.$message.error('failed')
+      this.$router.back()
+    }
+  }
+
+  async fetchDataForMonthlyReport () {
+    this.loading = true
+    const res = await NaireAction.statis2({
+      client: {
+        id: 1,
+        name: 'iForms_GTA',
+        token: 'YWVzLTI1Ni1nY206Y0c5UGMwMXFRWGxOUXpCM1RWTXdlVTlUTUhoT1VWZFJZMUA1Mi4zOS45MC4yNjo1MjIxOQNv6RRuGEVvmGjB+jimI/gw==',
+        isActive: 1
+      },
+      dealerId: '', // 703518
+      formId: 47,
+      from: 1402459763000,
+      marketId: '9999',
+      month: 2,
+      to: 1604082375869
+    })
+    this.loading = false
+    if (res.success) {
+      this.monthlyCounts = res.data!
+      this.getChartsDataForMonthlyCount(res.data!)
+    } else {
+      this.$message.error('failed')
       this.$router.back()
     }
   }
 
   public mounted () {
     this.fetchData()
+    this.fetchDataForMonthlyReport()
   }
 }
 </script>
@@ -429,4 +524,7 @@ export default class StatisticsComponent extends Vue {
         text-align: center;
       }
     }
+.naire-search-panel {
+  margin: 10px;
+}
 </style>
