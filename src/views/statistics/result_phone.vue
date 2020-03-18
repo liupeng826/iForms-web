@@ -12,7 +12,7 @@
     <div class="naire-search-panel">
       <el-row :gutter="10">
         <el-col :xs="12" :sm="12" :md="6" :lg="4" :xl="4" class="select-wrapper">
-          <el-select v-model="defaultMarket" placeholder="SELECT MARKET">
+          <el-select v-model="defaultMarket" placeholder="SELECT MARKET" @change="selectMarket">
             <el-option
               v-for="item in allMarkets"
               :key="item.value"
@@ -22,7 +22,7 @@
           </el-select>
         </el-col>
         <el-col :xs="12" :sm="12" :md="6" :lg="4" :xl="4" class="select-wrapper">
-          <el-select v-model="defaultDealer" placeholder="SELECT DEALER">
+          <el-select v-model="defaultDealer" placeholder="SELECT DEALER" :loading="loadingDealers" @change="selectDealer">
             <el-option
               v-for="item in allDealers"
               :key="item.value"
@@ -145,6 +145,7 @@ export default class StatisticsComponent extends Vue {
   private defaultDealer = '';
   private defaultForm = '';
   private defaultMonth = '';
+  private loadingDealers = false;
 
   getChartsData (optionCounts: any[]) {
     this.optionCounts.forEach((item: Questionnaire.IOptionCount, quesIndex: number) => {
@@ -433,6 +434,30 @@ export default class StatisticsComponent extends Vue {
       this.$message.error('failed')
       this.$router.back()
     }
+  }
+
+  selectMarket (value) {
+    if (value !== '') {
+      this.loadingDealers = true
+      for (var item of this.provinces) {
+        if (item.code === value) {
+          this.cities = item.cities
+          this.city = ''
+          this.loadingCity = false
+          break
+        } else {
+          continue
+        }
+      }
+    } else {
+      this.cities = []
+      this.city = ''
+    }
+    this.$emit('selectChange', this.province, this.city)
+  }
+
+  selectDealer (value) {
+
   }
 
   public mounted () {
