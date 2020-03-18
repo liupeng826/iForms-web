@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import qs from 'qs'
 import { IApiNaireSourceData, IApiAnswerStatisticResult, IApiNaireItem } from './types'
 import { Config } from '@/settings'
 
@@ -129,15 +130,8 @@ export const questions = (data: {
  * 问卷详情
  * @param data
  */
-export const detail = (data: {
-  id: string
-  type: 'normal'
-}) => {
-  return request.post<any>('/naire/detail', data, {
-    headers: {
-      'Content-Type': 'application/json; charset=UTF-8'
-    }
-  })
+export const detail = (params:{superFormId: string}) => {
+  return request.get<any>('api/v1/form', params)
 }
 
 /**

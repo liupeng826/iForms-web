@@ -24,7 +24,7 @@ export interface IApiQuestionItem {
 // 问卷格式
 export interface IApiNaireItem {
   id: string,
-  supperId: string,
+  superFormId: string,
   createdDate: string,
   deadline: string,
   title: string,
