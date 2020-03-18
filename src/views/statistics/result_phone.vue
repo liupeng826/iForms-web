@@ -32,7 +32,7 @@
           </el-select>
         </el-col>
         <el-col :xs="12" :sm="12" :md="6" :lg="4" :xl="4" class="select-wrapper">
-          <el-select v-model="defaultDealer" placeholder="SELECT SURVEY">
+          <el-select v-model="defaultForm" placeholder="SELECT SURVEY">
             <el-option
               v-for="item in allForms"
               :key="item.value"
@@ -138,20 +138,12 @@ export default class StatisticsComponent extends Vue {
   private chartsOptionsForMonthlyCount: any = [];
   private questionType = questionType1;
   private allMarkets: any =
-    [{
-      value: 1,
-      label: 'Malaysia'
-    }, {
-      value: 2,
-      label: 'Singapore'
-    }, {
-      value: 3,
-      label: 'Thailand'
-    }];
+    [{ value: 1, label: 'Malaysia' }, { value: 2, label: 'Singapore' }, { value: 3, label: 'Thailand' }];
   private allDealers = [];
   private allForms = [{ value: 1, label: 'Parts Survey' }, { value: 2, label: 'Service Survey' }];
   private defaultMarket = '';
   private defaultDealer = '';
+  private defaultForm = '';
   private defaultMonth = '';
 
   getChartsData (optionCounts: any[]) {
