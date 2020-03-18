@@ -1,6 +1,5 @@
 <template>
   <div v-loading.fullscreen.lock="loading">
-    <header-info :naire="naire" />
     <div>
       <el-alert
         v-if="optionCounts.length <= 0"
@@ -11,67 +10,89 @@
       </el-alert>
     </div>
     <div class="naire-search-panel">
-      <el-select v-model="defaultMarket" placeholder="SELECT MARKET">
-        <el-option
-          v-for="item in allMarkets"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-      <el-select v-model="defaultDealer" placeholder="SELECT DEALER">
-        <el-option
-          v-for="item in dealers"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-      <el-date-picker
-        v-model="defaultMonth"
-        type="month"
-        placeholder="SELECT MONTH"
-      />
+      <el-row :gutter="10">
+        <el-col :xs="12" :sm="12" :md="6" :lg="4" :xl="4" class="select-wrapper">
+          <el-select v-model="defaultMarket" placeholder="SELECT MARKET">
+            <el-option
+              v-for="item in allMarkets"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="6" :lg="4" :xl="4" class="select-wrapper">
+          <el-select v-model="defaultDealer" placeholder="SELECT DEALER">
+            <el-option
+              v-for="item in allDealers"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="6" :lg="4" :xl="4" class="select-wrapper">
+          <el-select v-model="defaultDealer" placeholder="SELECT SURVEY">
+            <el-option
+              v-for="item in allForms"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="6" :lg="4" :xl="4" class="select-wrapper">
+          <el-date-picker
+            v-model="defaultMonth"
+            type="month"
+            placeholder="SELECT MONTH"
+          />
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="6" :lg="8" :xl="8" style="text-align:center">
+          <el-button type="primary" icon="el-icon-search" style="width:200px">SEARCH</el-button>
+        </el-col>
+      </el-row>
     </div>
-    <div class="header">
-      <h1>{{ optionCounts[0].formTitle }}</h1>
-    </div>
-    <div
-      v-for="(answer, index) in chartsOptions"
-      :key="index"
-      :class="index % 2 === 0 ? 'question-list left': 'question-list right'"
-    >
-      <div class="question-item">
-        <h3 class="title">
-          Q{{ index + 1 }}: （{{ answer.questionId }}）{{ answer.questionTitle
-          }}{{ answer.isRequired ? "Required" : "Optional" }}
-          <!-- <el-button type="primary" @click="downloadXls(index)">导出选项数据</el-button> -->
-        </h3>
-        <p class="description">{{ answer.answerDescription }}</p>
-      </div>
-      <!-- 图表，跟随内容变高 -->
-      <div
-        v-if="Number(answer.questionTypeId) === questionType.SINGLE_CHOICE ||
-          Number(answer.questionTypeId) === questionType.MULTIPLE_CHOICE ||
-          Number(answer.questionTypeId) === questionType.RATING ||
-          Number(answer.questionTypeId) ===questionType.NET_PROMOTER_SCORE"
-        class="echarts"
-      >
-        <div
-          :id="'chart-' + index"
-          :class="index % 2 === 0 ? 'chart-left': 'chart-right'"
-        />
-      </div>
-    </div>
-    <div
-      :class="chartsOptions.length % 2 === 0 ? 'question-list left': 'question-list right'"
-    >
-      <div class="echarts">
-        <div
-          id="chart-monthly-report"
-          :class="chartsOptions.length % 2 === 0 ? 'chart-left': 'chart-right'"
-        />
-      </div>
+    <div class="naire-result-panel">
+      <el-row :gutter="10">
+        <el-col
+          v-for="(answer, index) in chartsOptions"
+          :key="index"
+          :xs="24"
+          :sm="24"
+          :md="12"
+          :lg="12"
+          :xl="12"
+          class="chart-wrapper"
+        >
+          <div class="">
+            <h3 class="title">
+              Q{{ index + 1 }}: （{{ answer.questionId }}）{{ answer.questionTitle
+              }}{{ answer.isRequired ? "Required" : "Optional" }}
+            </h3>
+            <p class="description">{{ answer.answerDescription }}</p>
+          </div>
+          <div
+            v-if="Number(answer.questionTypeId) === questionType.SINGLE_CHOICE ||
+              Number(answer.questionTypeId) === questionType.MULTIPLE_CHOICE ||
+              Number(answer.questionTypeId) === questionType.RATING ||
+              Number(answer.questionTypeId) ===questionType.NET_PROMOTER_SCORE"
+            class="echarts"
+          >
+            <div
+              :id="'chart-' + index"
+              style="height:200px"
+            />
+          </div>
+        </el-col>
+      </el-row>
+      <el-row style="background:#fff; padding:16px 16px 0; margin-bottom:32px;">
+        <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+          <div class="echarts">
+            <div id="chart-monthly-report" ref="chart_monthly_report" style="height:200px" />
+          </div>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
@@ -100,14 +121,6 @@ class QuestionAnswer extends Vue {
   isRequired: boolean = true;
   optionDescriptions: string[] = [];
   totalNumbers: number[] = [];
-
-  // constructor (questionId: number, questionTypeId: number,
-  //   optionDescriptions: string[], totalNumbers: number[]) {
-  //   this.questionId = questionId
-  //   this.questionTypeId = questionTypeId
-  //   this.optionDescriptions = optionDescriptions
-  //   this.totalNumbers = totalNumbers
-  // }
 }
 
 @Component({
@@ -126,15 +139,17 @@ export default class StatisticsComponent extends Vue {
   private questionType = questionType1;
   private allMarkets: any =
     [{
-      value: '1',
+      value: 1,
       label: 'Malaysia'
     }, {
-      value: '2',
+      value: 2,
       label: 'Singapore'
     }, {
-      value: '3',
+      value: 3,
       label: 'Thailand'
     }];
+  private allDealers = [];
+  private allForms = [{ value: 1, label: 'Parts Survey' }, { value: 2, label: 'Service Survey' }];
   private defaultMarket = '';
   private defaultDealer = '';
   private defaultMonth = '';
@@ -146,22 +161,7 @@ export default class StatisticsComponent extends Vue {
         item.questionTypeId === questionType1.MULTIPLE_CHOICE ||
         item.questionTypeId === questionType1.RATING ||
         item.questionTypeId === questionType1.NET_PROMOTER_SCORE
-      ) {
-        // const tempObj: any = {
-        //   questionTitle: 'Q' + (quesIndex + 1),
-        //   Axis: []
-        // }
-        // item.options!.forEach((option: Questionnaire.IOptionItem) => {
-        //   // 字数过长则使用 ... 截掉多余文字
-        //   const content =
-        //     option.content.length > 16
-        //       ? `${option.content.substring(0, 14)}...`
-        //       : option.content
-        //   tempObj.Axis.push(content)
-        // })
-        // tempObj.series = item.charts
-        // this.chartsOptions[item.q_id] = { ...tempObj }
-      }
+      ) {}
     })
     this.generateAnswers()
 
@@ -185,19 +185,10 @@ export default class StatisticsComponent extends Vue {
     var tempQuestionAnswer: QuestionAnswer
 
     that.optionCounts.forEach((element, index) => {
-      // var tempQuestionAnswer = {
-      //   questionId: 0,
-      //   questionTypeId: 0,
-      //   optionDescriptions: [],
-      //   totalNumbers: []
-      // }
-
       if (tempQuestionId !== element.optionQuestionId) {
         // Different question
         tempQuestionId = element.optionQuestionId
         tempQuestionAnswer = new QuestionAnswer()
-        // tempQuestionAnswer = new QuestionAnswer(element.optionQuestionId, element.questionTypeId,
-        // element.optionDescription!, element.answerValue!)
         tempQuestionAnswer.questionId = element.optionQuestionId
         tempQuestionAnswer.questionTypeId = element.questionTypeId
 
@@ -282,6 +273,7 @@ export default class StatisticsComponent extends Vue {
 
   drawChart (index: number) {
     const element = document.getElementById('chart-' + index) as HTMLDivElement
+
     const chart = echarts.init(element)
     var series: any[] = []
     var temp = this.chartsOptions
@@ -341,7 +333,7 @@ export default class StatisticsComponent extends Vue {
 
   drawChartForMonthlyCount () {
     const element = document.getElementById('chart-monthly-report') as HTMLDivElement
-    if (element == null) console.log('chart-monthly-report is null')
+    // var bar_dv = this.$refs.chart_monthly_report
     const chart1 = echarts.init(element)
     var yAxis = {
       type: 'category',
@@ -459,72 +451,91 @@ export default class StatisticsComponent extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.question-list {
-  padding: 20px 0;
-  margin-bottom: 20px;
-  border-bottom: 2px dotted #eee;
-  .question-item {
-    .title {
-      font-size: 16px;
-    }
-    .description {
-      font-size: 14px;
+  .naire-search-panel {
+    background-color: rgb(240, 242, 245);
+    padding: 18px 22px 22px 22px;
+    margin-bottom: 20px;
+    .select-wrapper {
+      background: #fff;
+      padding: 10px 10px;
+      margin-bottom: 5px;
+      margin: 5px 0;
     }
   }
-}
 
-.result-table {
-  margin: 20px 0;
-}
+  .naire-result-panel {
+    padding: 18px 22px 22px 22px;
+    background-color: rgb(240, 242, 245);
+    border-bottom: 2px dotted #eee;
+    margin-bottom: 20px;
+    .chart-wrapper {
+      background: #fff;
+      padding: 16px 16px 0;
+      margin-bottom: 5px;
+      margin: 5px 0;
+    }
+  }
 
-.overload-tip {
-  margin-top: 20px;
-}
+  .result-table {
+    margin: 20px 0;
+  }
 
-.chart-left{
-  width: 100%;
-  height: 200px;
-  float: left
-}
+  .overload-tip {
+    margin-top: 20px;
+  }
 
-.left {
-  width: 50%;
-  float: left
-}
+  .chart-left{
+    width: 100%;
+    height: 200px;
+    float: left
+  }
 
-.chart-right{
-  width: 100%;
-  height: 200px;
-  float: right
-}
+  .left {
+    width: 50%;
+    float: left
+  }
 
-.right {
-  width: 50%;
-  float: right
-}
+  .chart-right{
+    width: 100%;
+    height: 200px;
+    float: right
+  }
 
-.el-select + .el-select {
-  margin-left: 15px;
-}
+  .right {
+    width: 50%;
+    float: right
+  }
 
-.el-select + .el-date-editor {
-  margin-left: 15px;
-}
+  .el-select + .el-select {
+    margin-left: 15px;
+  }
 
-.header {
-      padding: 10px 20px;
-      height: auto;
-      min-height: 33px;
-      border-bottom: 2px dotted #eee;
+  .el-select + .el-date-editor {
+    margin-left: 15px;
+  }
 
-      h1 {
-        width: 100%;
-        font-size: 32px !important;
-        margin: 0 auto;
-        text-align: center;
+  .header {
+    padding: 10px 20px;
+    height: auto;
+    min-height: 33px;
+    border-bottom: 2px dotted #eee;
+
+    h1 {
+      width: 100%;
+      font-size: 32px !important;
+      margin: 0 auto;
+      text-align: center;
+    }
+  }
+
+  .el-date-editor.el-input, .el-date-editor.el-input__inner {
+    width: 100% !important;
+  }
+
+  .el-row {
+      margin-bottom: 20px;
+      &:last-child {
+        margin-bottom: 0;
       }
     }
-.naire-search-panel {
-  margin: 10px;
-}
 </style>

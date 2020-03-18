@@ -124,6 +124,10 @@ const routes: RouteConfig[] = [
     path: '*',
     name: '404',
     component: () => import('@/views/404/404.vue')
+  },
+  {
+    path: '/result_phone',
+    component: () => import('@/views/statistics/result_phone.vue')
   }
 ]
 
