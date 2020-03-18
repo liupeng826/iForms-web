@@ -13,7 +13,7 @@ export const list = () => {
     },
     supperId: ''
   }
-  return request.post<IApiNaireItem[]>('/api/v1/form/getForms', data)
+  return request.post<IApiNaireItem[]>('/api/v1/form/getFormsByLevel', data)
 }
 
 /**
