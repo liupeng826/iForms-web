@@ -11,7 +11,7 @@
       />
       <el-table-column prop="title" label="问卷名称" align="left">
         <template slot-scope="{ row }">
-          <router-link tag="a" :to="`./view/${row.id}`">
+          <router-link tag="a" :to="`./view/${row.superFormId}`">
             {{ row.title }}
             <el-tag v-if="isExpired(row.deadline)" class="ml-10" size="mini" type="danger">已截止</el-tag>
           </router-link>
@@ -112,7 +112,7 @@ export default class NavBar extends Vue {
         this.$router.push({
           name: 'view',
           params: {
-            id: row.id
+            id: row.superFormId
           }
         })
         break
@@ -132,7 +132,7 @@ export default class NavBar extends Vue {
         this.$router.push({
           name: 'edit',
           params: {
-            id: row.id
+            id: row.superFormId
           }
         })
         break

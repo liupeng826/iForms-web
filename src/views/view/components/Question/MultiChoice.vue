@@ -1,15 +1,12 @@
 <template>
   <div>
-    <el-checkbox-group v-model="topic.selectMultipleContent" class="checkbox-list">
+    <el-checkbox-group v-model="question.questionOptions" class="checkbox-list">
       <el-checkbox
-        v-for="(option, opIndex) in topic.options"
+        v-for="(option, opIndex) in question.questionOptions"
         :key="opIndex"
-        :label="option.o_id"
+        :label="option.description"
         class="option-item"
-      >
-        <span>{{ option.content }}</span>
-        <div :class="['option-desc']" v-text="option.desc" />
-      </el-checkbox>
+      />
     </el-checkbox-group>
   </div>
 </template>
@@ -19,7 +16,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
 export default class extends Vue {
-  @Prop({ required: true }) private topic!: Questionnaire.IQuestionItem
+  @Prop({ required: true }) private question!: Questionnaire.IQuestion
   @Prop({ required: true }) private index!: number
 }
 </script>

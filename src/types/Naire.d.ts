@@ -12,7 +12,7 @@ declare namespace Questionnaire {
     last?: number
   }
 
-  export type QuestionType = '单选' | '多选' | '文本' | '符号' | '净推荐值' | '日期'
+  export type QuestionType = '单选' | '多选' | '文本' | '评分' | '净推荐值' | '日期'
   export type QuestionTypeId = 1 | 2 | 3 | 4 | 5 | 6
 
   export interface IQuestionItem {
@@ -44,7 +44,7 @@ declare namespace Questionnaire {
   }
 
   /* Data */
-  export interface IData {
+  export interface IForm {
     superFormId: string;
     id: number;
     title: string;

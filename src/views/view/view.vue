@@ -22,7 +22,7 @@
       </div>
       <div class="content">
         <div class="intro">
-          <div style="white-space: pre-wrap">{{ naire.intro }}</div>
+          <div style="white-space: pre-wrap">{{ naire.description }}</div>
           <p class="mt-10">截止日期：{{ naire.deadline | formatTime }}</p>
         </div>
         <div class="user-info">
@@ -47,7 +47,7 @@
           </el-form>
         </div>
 
-        <question-list :question-list="naire.topic" />
+        <question-list :question-list="naire.sections[0].questions" />
 
         <div class="text-center">
           <el-button
@@ -78,7 +78,7 @@ import * as NaireAction from '@/api/naire'
 import * as UserAction from '@/api/user'
 import QuestionList from './components/Question/QuestionList.vue'
 import { ElForm } from 'element-ui/types/form'
-import { questionType } from '@/config/enum/questionType'
+import { questionType1 } from '@/config/enum/questionType'
 
 @Component({
   components: {
@@ -172,37 +172,39 @@ export default class extends Vue {
   validateNaire () {
     let _flag = true
     let _addtion = false
-    this.naire!.topic.forEach((item: Questionnaire.IQuestionItem, index: number) => {
-      if (item.isRequired) {
-        if (item.type === questionType.TEXT_QUESTION) {
-          if (!(item.selectContent && item.selectContent.trim().length > 0)) {
-            _flag = false
+    this.naire!.sections.forEach((sectionItem: Questionnaire.ISection, index: number) => {
+      sectionItem!.questions.forEach((item: Questionnaire.IQuestion, index: number) => {
+        if (item.mandatory) {
+          if (item.questionTypeId === questionType1.TEXT_QUESTION) {
+            if (!(item.selectContent && item.selectContent.trim().length > 0)) {
+              _flag = false
+            }
+          }
+          if (item.questionTypeId === questionType1.SINGLE_CHOICE) {
+            const _isAddtion = item.options && item.options.some((option, index) => {
+              return option.isAddition && option.o_id === item.selectContent
+            })
+            // 有附加理由的情况
+            if (_isAddtion && !(item.additional && item.additional.trim().length > 0)) {
+              _addtion = true
+            }
+            if (!(item.selectContent && item.selectContent.trim().length > 0)) {
+              _flag = false
+            }
+          }
+          if (item.questionTypeId === questionType1.MULTIPLE_CHOICE) {
+            if (!(item.selectMultipleContent && item.selectMultipleContent.length > 0)) {
+              _flag = false
+            }
+            // 必选几项
+            if ((item.setting.last && item.setting.last > 0) &&
+              (item.selectMultipleContent && item.selectMultipleContent.length !== Number(item.setting.last)
+              )) {
+              _flag = false
+            }
           }
         }
-        if (item.type === questionType.SINGLE_CHOICE) {
-          const _isAddtion = item.options && item.options.some((option, index) => {
-            return option.isAddition && option.o_id === item.selectContent
-          })
-          // 有附加理由的情况
-          if (_isAddtion && !(item.additional && item.additional.trim().length > 0)) {
-            _addtion = true
-          }
-          if (!(item.selectContent && item.selectContent.trim().length > 0)) {
-            _flag = false
-          }
-        }
-        if (item.type === questionType.MULTIPLE_CHOICE) {
-          if (!(item.selectMultipleContent && item.selectMultipleContent.length > 0)) {
-            _flag = false
-          }
-          // 必选几项
-          if ((item.setting.last && item.setting.last > 0) &&
-            (item.selectMultipleContent && item.selectMultipleContent.length !== Number(item.setting.last)
-            )) {
-            _flag = false
-          }
-        }
-      }
+      })
     })
     if (!_flag) {
       this.$notify.warning({
@@ -240,8 +242,8 @@ export default class extends Vue {
     const nId = this.naire.n_id
     const result: any[] = []
 
-    this.naire.topic.forEach((question: Questionnaire.IQuestionItem, index: number) => {
-      if (question.type === '单选') {
+    this.naire.topic.forEach((question: Questionnaire.IQuestion, index: number) => {
+      if (question.questionTypeId === questionType1.SINGLE_CHOICE) {
         const curQues = {
           n_id: nId,
           u_id: this.userId,
@@ -250,7 +252,7 @@ export default class extends Vue {
           o_addition: question.additional ? question.additional.trim() : ''
         }
         result.push(curQues)
-      } else if (question.type === '多选') {
+      } else if (question.questionTypeId === questionType1.MULTIPLE_CHOICE) {
         const curQues = {
           n_id: nId,
           u_id: this.userId,
@@ -286,14 +288,11 @@ export default class extends Vue {
 
   async fetchData () {
     this.loading = true
-    const res = await NaireAction.detail({
-      n_id: this.$route.params.id,
-      type: 'normal'
-    })
+    const res = await NaireAction.detail({ superFormId: this.$route.params.id })
     this.loading = false
     if (res.success) {
-      this.naire = res.data
-      document.title = res.data.title
+      this.naire = res.data[0]
+      document.title = res.data[0].title
     }
   }
 

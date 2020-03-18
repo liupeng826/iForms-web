@@ -7,22 +7,22 @@
       一点东西都没有，赶快点击上方按钮添加题目吧！
     </div>
     <div
-      v-for="(topic, index) in questionList"
+      v-for="(question, index) in questionList"
       :key="index"
-      :class="['question-item', type]"
+      :class="['question-item', questionTypeId]"
     >
       <div class="question-order">
         <div class="title">
           Q{{ index + 1 }}：
-          [{{ topic.type }}] {{ topic.question }}<span v-if="topic.selectMultipleContent && topic.setting.last > 0"> (必选 {{ topic.setting.last }} 项，已勾选 {{ topic.selectMultipleContent.length }} 项)</span>
-          <span v-if="topic.isRequired" style="color: #f00;">*</span>
+          {{ question.title }}
+          <span v-if="question.mandatory" style="color: #f00;">*</span>
         </div>
-        <p v-if="topic.description !== ''" class="question-desc">说明：{{ topic.description }}</p>
+        <p v-if="question.subtitle !== ''" class="question-desc">说明：{{ question.subtitle }}</p>
       </div>
       <div class="question-content">
         <question-item
-          :type="topic.type"
-          :topic="topic"
+          :type="question.questionTypeId"
+          :question="question"
           :index="index"
           v-on="$listeners"
         />
@@ -41,7 +41,7 @@ import QuestionItem from './QuestionItem.vue'
   }
 })
 export default class extends Vue {
-  @Prop() questionList!: Questionnaire.IQuestionItem[]
+  @Prop() questionList!: Questionnaire.IQuestion[]
   @Prop({ default: 'normal' }) type?: string
 }
 </script>
