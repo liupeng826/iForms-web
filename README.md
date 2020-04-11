@@ -80,7 +80,9 @@ yarn run build
 - clipboard
 
 ## 截图
-
+![首页](https://github.com/liupeng826/iForms-web/blob/master/screenshort/Screen%20Shot%202020-04-11%20at%2010.51.01%20AM.png)
+![问卷](https://github.com/liupeng826/iForms-web/blob/master/screenshort/Screen%20Shot%202020-04-11%20at%2010.52.27%20AM.png)
+![分析](https://github.com/liupeng826/iForms-web/blob/master/screenshort/Screen%20Shot%202020-04-11%20at%2010.50.44%20AM.png)
 
 
 ## API 及数据库
