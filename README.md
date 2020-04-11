@@ -79,6 +79,10 @@ yarn run build
 - qrcode
 - clipboard
 
+## 截图
+
+
+
 ## API 及数据库
 
 #### .env.development
