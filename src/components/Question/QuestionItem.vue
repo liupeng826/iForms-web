@@ -1,16 +1,24 @@
 <template>
-  <component :is="componentName" v-bind="$attrs" v-on="$listeners" />
+  <div class="question-item">
+    <el-card shadow="hover">
+      <div class="header clearfix">
+        <span><i class="el-icon-question"></i> {{ $t('question.caption[' + questionTypeId + ']') }}</span>
+        <el-link type="danger" icon="el-icon-delete" style="float: right; padding: 1px 0 5px 0" @click="delQuestion(order)">{{ $t('question.delete') }}</el-link>
+      </div>
+      <component :is="componentName" :order="order" />
+    </el-card>
+  </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import { QuestionnaireModule } from '@/store/modules/questionnaire'
 import SingleChoice from './SingleChoice.vue'
 import MultiChoice from './MultiChoice.vue'
 import TextQuestion from './TextQuestion.vue'
 import SymbolScore from './SymbolScore.vue'
 import NetPromoterScore from './NetPromoterScore.vue'
 import DateQuestion from './DateQuestion.vue'
-import { questionType } from '@/config/enum/questionType'
 
 @Component({
   components: {
@@ -24,21 +32,28 @@ import { questionType } from '@/config/enum/questionType'
 })
 
 export default class extends Vue {
-  @Prop() type!: string
+  @Prop() order!: number
+  @Prop() questionTypeId!: number
 
   get componentName () {
-    if (this.type === questionType.SINGLE_CHOICE) { return 'SingleChoice' }
-    if (this.type === questionType.MULTIPLE_CHOICE) { return 'MultiChoice' }
-    if (this.type === questionType.TEXT_QUESTION) { return 'TextQuestion' }
-    if (this.type === questionType.Rating) { return 'SymbolScore' }
-    if (this.type === questionType.NET_PROMOTER_SCORE) { return 'NetPromoterScore' }
-    if (this.type === questionType.DATE_QUESTION) { return 'DateQuestion' }
+    return ['', 'SingleChoice', 'MultiChoice', 'TextQuestion', 'SymbolScore', 'DateQuestion', 'NetPromoterScore'][this.questionTypeId]
+  }
+
+  delQuestion (index: number) {
+    QuestionnaireModule.removeQuestion(index)
   }
 }
 </script>
 
-<style lang="scss">
-  .option-item {
-
+<style lang="scss" scoped>
+  .question-item {
+    margin-bottom: 20px;
+    .header {
+      padding: 9px 10px;
+      margin: -20px -20px 10px -20px;
+      border-bottom: 1px solid #EBEEF5;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
   }
 </style>

@@ -1,133 +1,109 @@
 <template>
   <div>
-    <el-form-item
-      label="题目"
-      :prop="'topic.' + index + '.question'"
-      :rules="{
-        required: true, message: '题目内容不能为空', trigger: 'blur'
-      }"
-    >
-      <el-input v-model="topic.question" placeholder="请输入题目内容" />
+    <el-form-item :label="$t('question.title')" :prop="'sections[0].questions[' + order +'].title'" :rules="{required: true, message: $t('question.titleIsRequired'), trigger: 'change'}">
+      <el-input v-model="question.title" :placeholder="$t('question.placeholderForQuestionTitle')" />
     </el-form-item>
-    <el-form-item label="题目说明">
-      <el-input v-model="topic.description" placeholder="请输入题目说明，可以为空" />
+    <el-form-item :label="$t('question.introduction')">
+      <el-input v-model="question.subtitle" :placeholder="$t('question.placeholderForQuestionIntroduction')" />
     </el-form-item>
-    <el-form-item label="">
-      <div
-        v-for="(option, opIndex) in topic.options"
-        :key="opIndex"
-        class="option-item"
-      >
-        <el-row :gutter="22">
-          <el-col :span="18">
-            <el-form-item
-              :label="`选项 ${ opIndex + 1 }`"
-              :prop="'topic.' + index + '.options.' + opIndex + '.content'"
-              :rules="{
-                required: true, message: '选项内容不能为空', trigger: 'blur'
-              }"
-            >
-              <el-input
-                v-model="option.content"
-                placeholder="请输入选项内容"
-              />
+    <el-form-item :label="$t('question.options')">
+      <div v-for="(option, opIndex) in question.questionOptions" :key="opIndex" class="option-item">
+        <el-row :gutter="10" v-if="option.isActive === 1">
+          <el-col :span="1">
+            <div style="text-align:center">{{ letters[opIndex] }}</div>
+          </el-col>
+          <el-col :span="19">
+            <el-form-item label-width="45px" :prop="'sections[0].questions[' + order +'].questionOptions[' + opIndex + '].description'" :rules="{ required: true, message: $t('question.optionDescriptionIsRequired'), trigger: 'change' }">
+              <el-input v-model="option.description" :placeholder="$t('question.placeholderForOptions')" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-button
-              type="success"
-              icon="el-icon-plus"
-              size="mini"
-              @click="addOption(index)"
-            />
-            <el-button
-              type="warning"
-              icon="el-icon-delete"
-              size="mini"
-              @click="delOption(index, opIndex)"
-            />
+            <el-button type="success" icon="el-icon-plus" size="mini" circle :disabled="disabledAdd" @click="addOption(opIndex)" />
+            <el-button type="warning" icon="el-icon-delete" size="mini" circle v-if="availableDel" @click="option.isActive = 0" />
           </el-col>
         </el-row>
-        <el-row>
-          <el-col :span="18">
-            <el-form-item label="描述">
-              <el-input
-                v-model="option.desc"
-                type="textarea"
-                :autosize="{ minRows: 2,maxRows: 5 }"
-                placeholder="请输入选项描述"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row style="margin-bottom: 5px">
-          <el-col :span="18">
-            <el-form-item label="图片">
-              <el-input
-                v-model="option.image"
-                placeholder="请输入图片地址"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <div class="option-addtion">
-          <el-form-item
-            label="附加内容："
-            :prop="'topic.' + index + '.options.' + opIndex + '.isAddition'"
-            :rules="{
-              required: true, message: '选项内容不能为空', trigger: 'blur'
-            }"
-          >
-            <el-switch
-              v-model="option.isAddition"
-              active-text="有"
-              inactive-text="无"
-            />
-          </el-form-item>
-        </div>
       </div>
     </el-form-item>
-    <el-form-item
-      label="必填项"
-      :prop="'topic.' + index + '.isRequired'"
-      :rules="{
-        type: 'boolean', required: true, message: '请选择是否为必填项', trigger: 'change'
-      }"
-    >
-      <div class="option-addtion">
-        <el-switch
-          v-model="topic.isRequired"
-          active-text="有"
-          inactive-text="否"
-        />
-      </div>
-    </el-form-item>
+    <div class="option-addtion">
+      <span>{{ $t('question.mandatory') }}</span>&nbsp;&nbsp;
+      <el-switch v-model="question.mandatory" :active-value="1" :inactive-value="0" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import { QuestionnaireModule } from '@/store/modules/questionnaire'
 
 @Component
 export default class extends Vue {
-  @Prop({ required: true }) private topic!: Questionnaire.IQuestionItem
-  @Prop({ required: true }) private index!: number
+  @Prop({ required: true }) private order!: number
 
-  private delOption (index: number, opIndex: number) {
-    this.$emit('delOption', {
-      index,
-      opIndex
+  get question () {
+    const questions = QuestionnaireModule.form.sections[0].questions
+    if (questions) {
+      return questions[this.order]
+    }
+  }
+
+  set question (q: Questionnaire.IQuestion) {
+    QuestionnaireModule.updateQuestion(q)
+  }
+
+  get availableDel () {
+    let nums = this.question.questionOptions.filter(item => item.isActive === 1).length
+    return nums > 1
+  }
+
+  get letters () {
+    let nums = this.question.questionOptions.map(item => item.isActive)
+    let len = nums.length
+    let letters: string[] = []
+    for (let i = 0; i < len; i++) {
+      let sum = 0
+      for (let j = 0; j < i; j++) {
+        sum += nums[j]
+      }
+      letters.push(String.fromCharCode(65 + sum))
+    }
+    return letters
+  }
+
+  get disabledAdd () {
+    return this.question.questionOptions.filter(item => item.isActive === 1).some(item => {
+      return item.description === ''
     })
   }
 
-  private addOption (index: number) {
-    this.$emit('addOption', {
-      index
-    })
+  private addOption (opIndex: number, superOptionId: string) {
+    let option: Questionnaire.IQuestionOption = {
+      sequence: 0,
+      language: 'en-us',
+      description: '',
+      isActive: 1
+    }
+    if(this.question.id){
+      option.questionId = this.question.id
+    }
+    this.question.questionOptions.splice(opIndex + 1, 0, option)
+    this.resetSequence()
   }
+
+  private resetSequence () {
+    this.question.questionOptions.forEach((item, index, arr) => {
+      item.sequence = index
+    })
+  } 
 }
 </script>
 
 <style lang="scss" scoped>
-
+  .option-addtion {
+    padding: 9px 10px;
+    margin: 10px -20px -20px -20px;
+    border-top: 1px solid #EBEEF5;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    text-align: right;
+  }
 </style>

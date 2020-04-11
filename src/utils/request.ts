@@ -5,6 +5,8 @@ import { Notification, MessageBox, Message } from 'element-ui'
 import { getLocalStorage, setLocalStorage } from '@/utils/storage'
 import { getToken } from '@/utils/auth'
 import { Config } from '@/settings'
+import i18n from '@/lang'
+import VueI18n from 'vue-i18n'
 
 type IAxiosResponse<T> = Request.IAxiosResponse<T>
 
@@ -36,32 +38,32 @@ service.interceptors.request.use(
   (err:any) => {
     if (err && err.request) {
       switch (err.request.status) {
-        case 400: err.message = '请求错误(400)'
+        case 400: err.message = i18n.t('request.statusCode_400')
           break
-        case 401: err.message = '身份认证信息已过期，请重新登录!'
+        case 401: err.message = i18n.t('request.statusCode_401')
           break
-        case 403: err.message = '拒绝访问(403)'
+        case 403: err.message = i18n.t('request.statusCode_403')
           break
-        case 404: err.message = '请求出错(404)'
+        case 404: err.message = i18n.t('request.statusCode_404')
           break
-        case 408: err.message = '请求超时(408)'
+        case 408: err.message = i18n.t('request.statusCode_408')
           break
-        case 500: err.message = '服务器错误(500)'
+        case 500: err.message = i18n.t('request.statusCode_500')
           break
-        case 501: err.message = '服务未实现(501)'
+        case 501: err.message = i18n.t('request.statusCode_501')
           break
-        case 502: err.message = '网络错误(502)'
+        case 502: err.message = i18n.t('request.statusCode_502')
           break
-        case 503: err.message = '服务不可用(503)'
+        case 503: err.message = i18n.t('request.statusCode_503')
           break
-        case 504: err.message = '网络超时(504)'
+        case 504: err.message = i18n.t('request.statusCode_504')
           break
-        case 505: err.message = 'HTTP版本不受支持(505)'
+        case 505: err.message = i18n.t('request.statusCode_505')
           break
-        default: err.message = `连接出错(${err.response.status})!`
+        default: err.message = i18n.t('request.defaultMsg') + `(${err.response.status})!`
       }
     } else {
-      err.message = '连接服务器失败!'
+      err.message = i18n.t('request.connectionFailure')
     }
     Message.error(err.message)
     console.log(err) // for debug
@@ -76,7 +78,7 @@ service.interceptors.response.use(
   err => {
     if (err.response) {
       switch (err.response.status) {
-        case 400: err.message = '请求错误(400)'
+        case 400: err.message = i18n.t('request.statusCode_400')
           break
         case 401:
           // 返回 401 清除token信息并跳转到登录页面
@@ -85,31 +87,35 @@ service.interceptors.response.use(
             path: '/login',
             query: { redirect: router.currentRoute.fullPath }
           })
-          err.message = 'Token失效或密码错误，请重新登录。'
+          err.message = i18n.t('request.tokenExpiredOrWrongPassword')
           break
-        case 403: err.message = '拒绝访问(403)'
+        case 403:
+          err.message = ''
+          router.replace({ path: '/403' })
           break
-        case 404: err.message = '请求出错(404)'
+        case 404: err.message = i18n.t('request.statusCode_404')
           break
-        case 408: err.message = '请求超时(408)'
+        case 408: err.message = i18n.t('request.statusCode_408')
           break
-        case 501: err.message = '服务未实现(501)'
+        case 501: err.message = i18n.t('request.statusCode_501')
           break
-        case 502: err.message = '网络错误(502)'
+        case 502: err.message = i18n.t('request.statusCode_502')
           break
-        case 503: err.message = '服务不可用(503)'
+        case 503: err.message = i18n.t('request.statusCode_503')
           break
-        case 504: err.message = '网络超时(504)'
+        case 504: err.message = i18n.t('request.statusCode_504')
           break
-        case 505: err.message = 'HTTP版本不受支持(505)'
+        case 505: err.message = i18n.t('request.statusCode_505')
           break
         default: err.message = `${err.response.data.msg}!`
       }
     } else {
       // err.message = `连接出错(${err.response.status})!`
-      err.message = `连接出错(${err})!`
+      err.message = i18n.t('request.defaultMsg') + `(${err})!`
     }
-    Message.error(err.message)
+    if (err.message !== '') {
+      Message.error(err.message)
+    }
     return Promise.reject(err) // 返回接口返回的错误信息
   })
 
@@ -133,7 +139,7 @@ service.defaults.transformResponse = (response) => {
   } catch (e) {
     return {
       success: false,
-      msg: '接口返回格式有误，请重试。'
+      msg: i18n.t('request.responseParseError')
     }
   }
 }
@@ -148,6 +154,11 @@ export default {
   },
   post<T> (url: string, data: any = {}, options: AxiosRequestConfig = {}): Promise<IAxiosResponse<T>> {
     return service.post(url, data, {
+      ...options
+    })
+  },
+  put<T> (url: string, data: any = {}, options: AxiosRequestConfig = {}): Promise<IAxiosResponse<T>> {
+    return service.put(url, data, {
       ...options
     })
   }

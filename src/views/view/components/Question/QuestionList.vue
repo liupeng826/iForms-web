@@ -1,31 +1,14 @@
 <template>
   <div>
-    <div
-      v-if="questionList && questionList.length === 0"
-      class="no-question"
-    >
-      一点东西都没有，赶快点击上方按钮添加题目吧！
-    </div>
-    <div
-      v-for="(question, index) in questionList"
-      :key="index"
-      :class="['question-item', questionTypeId]"
-    >
+    <div v-for="(question, index) in questionList" :key="index" class="question-item">
       <div class="question-order">
-        <div class="title">
-          Q{{ index + 1 }}：
-          {{ question.title }}
-          <span v-if="question.mandatory" style="color: #f00;">*</span>
+        <div class="title"><i class="el-icon-question" /> {{ index + 1 }} {{ question.title }}
+          <span v-if="question.mandatory" style="color: #f00; font-weight: bold">*</span>
         </div>
-        <p v-if="question.subtitle !== ''" class="question-desc">说明：{{ question.subtitle }}</p>
+        <p v-if="question.subtitle !== ''" class="question-desc">{{ $t('questionList.description') }} {{ question.subtitle }}</p>
       </div>
       <div class="question-content">
-        <question-item
-          :type="question.questionTypeId"
-          :question="question"
-          :index="index"
-          v-on="$listeners"
-        />
+        <question-item :question="question" />
       </div>
     </div>
   </div>
@@ -34,6 +17,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import QuestionItem from './QuestionItem.vue'
+import { questionType1 } from '@/config/enum/questionType'
 
 @Component({
   components: {
@@ -41,17 +25,11 @@ import QuestionItem from './QuestionItem.vue'
   }
 })
 export default class extends Vue {
-  @Prop() questionList!: Questionnaire.IQuestion[]
-  @Prop({ default: 'normal' }) type?: string
+  @Prop({ required: true }) questionList!: Questionnaire.IQuestion[]
 }
 </script>
 
 <style lang="scss" scoped>
-  .no-question {
-    margin: 30px 0;
-    font-size: 14px;
-  }
-
   .question-item {
     width: 100%;
     padding: 20px;
@@ -65,15 +43,13 @@ export default class extends Vue {
     .question-order {
       width: 100%;
       .title {
-        font-size: 16px;
-        font-weight: bold;
+        font-size: 1rem;
+        font-weight: bolder;
       }
-      .desc {
+      .question-desc {
         font-size: 12px;
+        text-indent: 1.25rem;
       }
-    }
-
-    .question-content {
     }
   }
 </style>

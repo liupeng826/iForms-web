@@ -32,7 +32,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import * as DeptAction from '@/api/dept'
 import { sexEnumMap } from '@/config/enum/sex'
 import { ElForm } from 'element-ui/types/form'
-import { defaultDeptData } from '@/api/default'
+import { defaultDeptData } from '@/constants/default'
 
 @Component
 export default class AddDeptComp extends Vue {

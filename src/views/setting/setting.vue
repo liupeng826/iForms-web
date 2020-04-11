@@ -1,18 +1,18 @@
 <template>
   <div class="change-pwd">
     <el-form ref="form" :model="form" :rules="rules" label-width="80">
-      <el-form-item label="原密码" prop="oldPasswd">
+      <el-form-item :label="$t('setting.oldPassword')" prop="oldPasswd">
         <el-input v-model="form.oldPasswd" type="password" />
       </el-form-item>
-      <el-form-item label="密码" prop="passwd">
+      <el-form-item :label="$t('setting.newPassword')" prop="passwd">
         <el-input v-model="form.passwd" type="password" />
       </el-form-item>
-      <el-form-item label="确认密码" prop="passwdCheck">
+      <el-form-item :label="$t('setting.confirmPassword')" prop="passwdCheck">
         <el-input v-model="form.passwdCheck" type="password" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :loading="loading" @click="handleSubmit">提交</el-button>
-        <el-button type="ghost" style="margin-left: 8px" @click="handleReset">重置</el-button>
+        <el-button type="primary" :loading="loading" @click="handleSubmit">{{ $t('setting.submit') }}</el-button>
+        <el-button type="ghost" style="margin-left: 8px" @click="handleReset">{{ $t('setting.reset') }}</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -26,9 +26,33 @@ import { UserModule } from '@/store/modules/user'
 
 @Component
 export default class extends Vue {
+  private loading: boolean = false
+  private oldPasswordRequired = ''
+  private newPasswordRequired = ''
+  private reEnterNewPassword = ''
+  private differentPassword = ''
+  private successMsg = ''
+  private failureMsg = ''
+
+  created () {
+    // debugger
+    this.oldPasswordRequired = this.$t('setting.oldPasswordRequired').toString()
+    this.newPasswordRequired = this.$t('setting.newPasswordRequired').toString()
+    this.reEnterNewPassword = this.$t('setting.reEnterNewPassword').toString()
+    this.differentPassword = this.$t('setting.differentPassword').toString()
+    this.successMsg = this.$t('setting.successMsg').toString()
+    this.failureMsg = this.$t('setting.failureMsg').toString()
+  }
+
+  private validateOldPassword (rule: any, value: string, callback: Function) {
+    if (value === '') {
+      callback(new Error(this.oldPasswordRequired))
+    }
+  }
+
   private validatePass (rule: any, value: string, callback: Function) {
     if (value === '') {
-      callback(new Error('请输入密码'))
+      callback(new Error(this.newPasswordRequired))
     } else {
       if (this.form.passwdCheck !== '') {
         // 对第二个密码框单独验证
@@ -38,11 +62,12 @@ export default class extends Vue {
       callback()
     }
   }
+
   private validatePassCheck (rule: any, value: string, callback: Function) {
     if (value === '') {
-      callback(new Error('请再次输入密码'))
+      callback(new Error(this.reEnterNewPassword))
     } else if (value !== this.form.passwd) {
-      callback(new Error('两次输入密码不一致!'))
+      callback(new Error(this.differentPassword))
     } else {
       callback()
     }
@@ -57,7 +82,6 @@ export default class extends Vue {
     passwdCheck: '',
     oldPasswd: ''
   }
-
   private rules: any = {
     passwd: [
       { validator: this.validatePass, trigger: 'blur' }
@@ -66,11 +90,9 @@ export default class extends Vue {
       { validator: this.validatePassCheck, trigger: 'blur' }
     ],
     oldPasswd: [
-      { required: true, message: '请输入原密码', trigger: 'blur' }
+      { required: true, validator: this.validateOldPassword, trigger: 'blur' }
     ]
   }
-
-  private loading: boolean = false
 
   handleSubmit () {
     const ref = this.$refs.form as ElForm
@@ -84,13 +106,13 @@ export default class extends Vue {
       const res = await AdminAction.changePwd(params)
       this.loading = false
       if (res.success) {
-        this.$message.success('修改成功')
+        this.$message.success(this.successMsg)
         // 重置表单
         this.handleReset()
         UserModule.logout()
         this.$router.push('/login')
       } else {
-        this.$message.error('修改失败，请重试')
+        this.$message.error(this.failureMsg)
       }
     })
   }

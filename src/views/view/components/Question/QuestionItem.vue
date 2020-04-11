@@ -1,5 +1,5 @@
 <template>
-  <component :is="componentName" v-bind="$attrs" v-on="$listeners" />
+  <component :is="componentName" :question="question" />
 </template>
 
 <script lang="ts">
@@ -23,18 +23,14 @@ import { questionType1 } from '@/config/enum/questionType'
   }
 })
 export default class extends Vue {
-  @Prop() type!: number
+  @Prop({ required: true }) question!: Questionnaire.IQuestion
+  // @Prop({ required: false }) answer!: Questionnaire.IAnswer
 
   get componentName () {
-    if (this.type === questionType1.SINGLE_CHOICE) { return 'SingleChoice' }
-    if (this.type === questionType1.MULTIPLE_CHOICE) { return 'MultiChoice' }
-    if (this.type === questionType1.TEXT_QUESTION) { return 'TextQuestion' }
-    if (this.type === questionType1.RATING) { return 'SymbolScore' }
-    if (this.type === questionType1.NET_PROMOTER_SCORE) { return 'NetPromoterScore' }
-    if (this.type === questionType1.DATE_QUESTION) { return 'DateQuestion' }
+    return ['', 'SingleChoice', 'MultiChoice', 'TextQuestion', 'SymbolScore', 'DateQuestion', 'NetPromoterScore'][this.question.questionTypeId || 0]
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 </style>

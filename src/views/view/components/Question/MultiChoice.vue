@@ -1,12 +1,12 @@
 <template>
   <div>
-    <el-checkbox-group v-model="question.questionOptions" class="checkbox-list">
+    <el-checkbox-group value="0" class="checkbox-list">
       <el-checkbox
         v-for="(option, opIndex) in question.questionOptions"
         :key="opIndex"
-        :label="option.description"
+        :label="option.id"
         class="option-item"
-      />
+      >{{ option.description }}</el-checkbox>
     </el-checkbox-group>
   </div>
 </template>
@@ -16,27 +16,18 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
 export default class extends Vue {
-  @Prop({ required: true }) private question!: Questionnaire.IQuestion
-  @Prop({ required: true }) private index!: number
+  @Prop({ required: true }) question!: Questionnaire.IQuestion;
+  private questionOptionGroups = this.question!.questionOptions
 }
 </script>
 
 <style lang="scss" scoped>
-  .checkbox-list {
-    width: 100%;
-
-    .option-item {
-      display: block;
-      margin: 20px 0;
-    }
-
-    .option-desc {
-      width: 100%;
-      padding-left: 19px;
-      box-sizing: border-box;
-      word-break: break-all;
-      word-wrap: break-word;
-      white-space: pre-wrap;
-    }
+.checkbox-list {
+  width: 100%;
+  padding-left: 1.25rem;
+  .option-item {
+    display: block;
+    margin: 1rem 0 0 0;
   }
+}
 </style>

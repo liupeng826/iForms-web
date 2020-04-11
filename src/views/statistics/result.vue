@@ -1,7 +1,6 @@
 <template>
   <div v-loading.fullscreen.lock="loading">
-    <header-info :naire="naire" />
-    <div>
+    <!-- <div>
       <el-alert
         v-if="optionCounts.length <= 0"
         class="overload-tip"
@@ -9,69 +8,95 @@
       >
         No Data Found
       </el-alert>
+    </div> -->
+    <!-- <div class="header">
+      <h1>统计分析</h1>
+    </div> -->
+    <div class="form-search-panel">
+      <el-row :gutter="10">
+        <el-col :xs="12" :sm="12" :md="12" :lg="5" :xl="5" class="select-wrapper">
+          <el-select v-model="selectedMarket" :disabled="userRole === roleEnum.SUPER_ADMIN ? false:true" :placeholder="$t('statistics.placeholderForSelectMarket')" :loading="loadingMarkets" @change="selectMarket">
+            <el-option
+              v-for="item in allMarkets"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="5" :xl="5" class="select-wrapper">
+          <el-select v-model="selectedDealer" :placeholder="$t('statistics.placeholderForSelectDealer')" :loading="loadingDealers" @change="selectDealer">
+            <el-option
+              v-for="item in allDealers"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="5" :xl="5" class="select-wrapper">
+          <el-select v-model="selectedForm" :placeholder="$t('statistics.placeholderForSelectForm')">
+            <el-option
+              v-for="item in allForms"
+              :key="item.id"
+              :label="item.title"
+              :value="item.id"
+            />
+          </el-select>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="12" :lg="5" :xl="5" class="select-wrapper">
+          <el-date-picker
+            v-model="defaultMonth"
+            type="month"
+            :placeholder="$t('statistics.placeholderForSelectMonth')"
+            @change="selectMonth"
+          />
+        </el-col>
+        <el-col :xs="24" :sm="24" :md="24" :lg="4" :xl="4" class="search-button">
+          <el-button type="primary" icon="el-icon-search" style="width:200px" @click="btnSearchClick">{{ $t('statistics.search') }}</el-button>
+        </el-col>
+      </el-row>
     </div>
-    <div class="naire-search-panel">
-      <el-select v-model="defaultMarket" placeholder="SELECT MARKET">
-        <el-option
-          v-for="item in allMarkets"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-      <el-select v-model="defaultDealer" placeholder="SELECT DEALER">
-        <el-option
-          v-for="item in dealers"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-      <el-date-picker
-        v-model="defaultMonth"
-        type="month"
-        placeholder="SELECT MONTH"
-      />
-    </div>
-    <div class="header">
-      <h1>{{ optionCounts[0].formTitle }}</h1>
-    </div>
-    <div
-      v-for="(answer, index) in chartsOptions"
-      :key="index"
-      :class="index % 2 === 0 ? 'question-list left': 'question-list right'"
-    >
-      <div class="question-item">
-        <h3 class="title">
-          Q{{ index + 1 }}: （{{ answer.questionId }}）{{ answer.questionTitle
-          }}{{ answer.isRequired ? "Required" : "Optional" }}
-          <!-- <el-button type="primary" @click="downloadXls(index)">导出选项数据</el-button> -->
-        </h3>
-        <p class="description">{{ answer.answerDescription }}</p>
-      </div>
-      <!-- 图表，跟随内容变高 -->
-      <div
-        v-if="Number(answer.questionTypeId) === questionType.SINGLE_CHOICE ||
-          Number(answer.questionTypeId) === questionType.MULTIPLE_CHOICE ||
-          Number(answer.questionTypeId) === questionType.RATING ||
-          Number(answer.questionTypeId) ===questionType.NET_PROMOTER_SCORE"
-        class="echarts"
-      >
-        <div
-          :id="'chart-' + index"
-          :class="index % 2 === 0 ? 'chart-left': 'chart-right'"
-        />
-      </div>
-    </div>
-    <div
-      :class="chartsOptions.length % 2 === 0 ? 'question-list left': 'question-list right'"
-    >
-      <div class="echarts">
-        <div
-          id="chart-monthly-report"
-          :class="chartsOptions.length % 2 === 0 ? 'chart-left': 'chart-right'"
-        />
-      </div>
+    <div class="form-result-panel">
+      <el-row id="row1" :gutter="10">
+        <el-col
+          v-for="(answer, index) in chartsOptions"
+          :key="index"
+          :xs="24"
+          :sm="24"
+          :md="12"
+          :lg="12"
+          :xl="12"
+          class="chart-wrapper"
+        >
+          <div class="">
+            <h3 class="title">
+              Q{{ index + 1 }}:{{ answer.questionTitle }}
+              <!-- ({{ answer.isRequired ? "Required" : "Optional" }}) -->
+            </h3>
+            <p class="description">{{ answer.answerDescription }}</p>
+          </div>
+          <div
+            v-if="Number(answer.questionTypeId) === questionType.SINGLE_CHOICE ||
+              Number(answer.questionTypeId) === questionType.MULTIPLE_CHOICE ||
+              Number(answer.questionTypeId) === questionType.RATING ||
+              Number(answer.questionTypeId) ===questionType.NET_PROMOTER_SCORE"
+            class="echarts"
+          >
+            <div
+              :id="'chart-' + index"
+              style="height:200px"
+            />
+          </div>
+        </el-col>
+      </el-row>
+      <el-row :gutter="10" style="background:#fff; padding:8px;">
+        <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+          <div class="echarts">
+            <div id="chart-monthly-report" ref="chart_monthly_report" style="height:200px" />
+          </div>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
@@ -80,15 +105,19 @@
 import { Component, Vue } from 'vue-property-decorator'
 import echarts from 'echarts'
 
-import HeaderInfo from '@/components/NaireComponent/HeaderInfo.vue'
+import HeaderInfo from '@/components/FormComponent/HeaderInfo.vue'
 
-import * as NaireAction from '@/api/naire'
+import * as FormAction from '@/api/form'
+import * as Constants from '@/constants/default'
 import { questionType1 } from '@/config/enum/questionType'
 import { formatJson } from '@/utils'
 import { exportJson2Excel } from '@/utils/excel'
+import { UserModule } from '@/store/modules/user'
+import { roleEnum } from '@/config/enum/roleEnum'
+import { getMarketInfo } from '@/utils/cookies'
 
 //  结果统计题目
-interface StatisticQuestionItem extends Questionnaire.IQuestionItem {
+interface StatisticQuestionItem extends Form.IQuestion {
   charts: string[];
   q_id: string;
 }
@@ -100,14 +129,6 @@ class QuestionAnswer extends Vue {
   isRequired: boolean = true;
   optionDescriptions: string[] = [];
   totalNumbers: number[] = [];
-
-  // constructor (questionId: number, questionTypeId: number,
-  //   optionDescriptions: string[], totalNumbers: number[]) {
-  //   this.questionId = questionId
-  //   this.questionTypeId = questionTypeId
-  //   this.optionDescriptions = optionDescriptions
-  //   this.totalNumbers = totalNumbers
-  // }
 }
 
 @Component({
@@ -117,51 +138,45 @@ class QuestionAnswer extends Vue {
 })
 export default class StatisticsComponent extends Vue {
   private loading: boolean = false;
-  // private answers: Questionnaire.IAnswer[] = [];
-  // private sections: Questionnaire.ISection[] | null = null;
-  private optionCounts: Questionnaire.IOptionCount[] = [];
-  private monthlyCounts: Questionnaire.IMonthlyCount[] = []
+  private userRole: number = 0;
+  private marketIdOfCurrentUser = '';
+  // private answers: Form.IAnswer[] = [];
+  // private sections: Form.ISection[] | null = null;
+  private optionCounts: Form.IOptionCount[] = [];
+  private monthlyCounts: Form.IMonthlyCount[] = []
   private chartsOptions: any = [];
   private chartsOptionsForMonthlyCount: any = [];
   private questionType = questionType1;
-  private allMarkets: any =
-    [{
-      value: '1',
-      label: 'Malaysia'
-    }, {
-      value: '2',
-      label: 'Singapore'
-    }, {
-      value: '3',
-      label: 'Thailand'
-    }];
-  private defaultMarket = '';
-  private defaultDealer = '';
-  private defaultMonth = '';
+  private roleEnum = roleEnum;
+
+  private allMarkets: any = [];
+  private allDealers: any = [];
+  private allForms: any = [];
+
+  private selectedMarket = ''
+  private selectedMarketId = ''
+  private selectedDealer = ''
+  private selectedDealerId = ''
+  private selectedForm = ''
+  private selectedSuperFormId = ''
+  private selectedFormId = ''
+  private selectedMonth: string = ''
+  private defaultMonth = ''
+  private from: number = 0
+  private to: number = 0
+
+  private loadingMarkets = false;
+  private loadingDealers = false;
+  private loadingForms = false;
 
   getChartsData (optionCounts: any[]) {
-    this.optionCounts.forEach((item: Questionnaire.IOptionCount, quesIndex: number) => {
+    this.optionCounts.forEach((item: Form.IOptionCount, quesIndex: number) => {
       if (
         item.questionTypeId === questionType1.SINGLE_CHOICE ||
         item.questionTypeId === questionType1.MULTIPLE_CHOICE ||
         item.questionTypeId === questionType1.RATING ||
         item.questionTypeId === questionType1.NET_PROMOTER_SCORE
-      ) {
-        // const tempObj: any = {
-        //   questionTitle: 'Q' + (quesIndex + 1),
-        //   Axis: []
-        // }
-        // item.options!.forEach((option: Questionnaire.IOptionItem) => {
-        //   // 字数过长则使用 ... 截掉多余文字
-        //   const content =
-        //     option.content.length > 16
-        //       ? `${option.content.substring(0, 14)}...`
-        //       : option.content
-        //   tempObj.Axis.push(content)
-        // })
-        // tempObj.series = item.charts
-        // this.chartsOptions[item.q_id] = { ...tempObj }
-      }
+      ) {}
     })
     this.generateAnswers()
 
@@ -183,23 +198,18 @@ export default class StatisticsComponent extends Vue {
     var tempQuestionId: number = -1
     var that = this
     var tempQuestionAnswer: QuestionAnswer
+    if (this.chartsOptions.length > 0) {
+      this.chartsOptions = []
+    }
 
     that.optionCounts.forEach((element, index) => {
-      // var tempQuestionAnswer = {
-      //   questionId: 0,
-      //   questionTypeId: 0,
-      //   optionDescriptions: [],
-      //   totalNumbers: []
-      // }
-
       if (tempQuestionId !== element.optionQuestionId) {
         // Different question
         tempQuestionId = element.optionQuestionId
         tempQuestionAnswer = new QuestionAnswer()
-        // tempQuestionAnswer = new QuestionAnswer(element.optionQuestionId, element.questionTypeId,
-        // element.optionDescription!, element.answerValue!)
         tempQuestionAnswer.questionId = element.optionQuestionId
         tempQuestionAnswer.questionTypeId = element.questionTypeId
+        tempQuestionAnswer.questionTitle = element.questionTitle
 
         this.chartsOptions.push(tempQuestionAnswer)
       }
@@ -211,13 +221,13 @@ export default class StatisticsComponent extends Vue {
         tempQuestionAnswer.totalNumbers.push(Number(element.totalNumber!))
       } else if (Number(element.questionTypeId) === questionType1.RATING) {
         tempQuestionAnswer.optionDescriptions = ['Five Stars', 'Four Stars', 'Three Stars', 'Two Stars', 'One Star']
-        // if (tempQuestionAnswer.totalNumbers.length === 0) {
-        //   tempQuestionAnswer.totalNumbers = [0, 0, 0, 0, 0]
-        // }
+        if (tempQuestionAnswer.totalNumbers.length === 0) {
+          tempQuestionAnswer.totalNumbers = [0, 0, 0, 0, 0]
+        }
 
         switch (element.answerValue) {
           case 5:
-            tempQuestionAnswer.totalNumbers[0] = element.totalNumber!
+            tempQuestionAnswer.totalNumbers[0] = Number(element.totalNumber!)
             break
           case 4:
             tempQuestionAnswer.totalNumbers[1] = Number(element.totalNumber!)
@@ -234,6 +244,9 @@ export default class StatisticsComponent extends Vue {
         }
       } else if (Number(element.questionTypeId) === questionType1.NET_PROMOTER_SCORE) {
         tempQuestionAnswer.optionDescriptions = [element.netPromoterFrom!, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', element.netPromoterTo!]
+        if (tempQuestionAnswer.totalNumbers.length === 0) {
+          tempQuestionAnswer.totalNumbers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }
         switch (element.answerValue) {
           case 10:
             tempQuestionAnswer.totalNumbers[10] = Number(element.totalNumber!)
@@ -274,7 +287,7 @@ export default class StatisticsComponent extends Vue {
   }
 
   getChartsDataForMonthlyCount (monthlyCounts: any[]) {
-    this.monthlyCounts.forEach((item: Questionnaire.IMonthlyCount, index: number) => {
+    this.monthlyCounts.forEach((item: Form.IMonthlyCount, index: number) => {
     })
 
     this.$nextTick(() => this.drawChartForMonthlyCount())
@@ -282,6 +295,7 @@ export default class StatisticsComponent extends Vue {
 
   drawChart (index: number) {
     const element = document.getElementById('chart-' + index) as HTMLDivElement
+
     const chart = echarts.init(element)
     var series: any[] = []
     var temp = this.chartsOptions
@@ -290,6 +304,10 @@ export default class StatisticsComponent extends Vue {
       var eachPercentage =
         temp[index].totalNumbers[i] /
         temp[index].totalNumbers.reduce(function (a, b) { return a + b })
+
+      if (isNaN(eachPercentage)) {
+        eachPercentage = 0
+      }
 
       series.push({
         name: e,
@@ -300,7 +318,8 @@ export default class StatisticsComponent extends Vue {
           position: 'inside',
           formatter: '{c}%'
         },
-        data: [eachPercentage * 100]
+        data: [(eachPercentage * 100).toFixed(0)],
+        valueType: 'percent'
       })
     })
 
@@ -311,7 +330,19 @@ export default class StatisticsComponent extends Vue {
           // 坐标轴指示器，坐标轴触发有效
           type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
         },
-        formatter: '{c}%'
+        formatter: function (params: string|any[]) {
+          // var html = params[0].name + '<br>'
+          var html = ''
+          for (var i = 0; i < params.length; i++) {
+            html += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:' + params[i].color + ';"></span>'
+            if (option.series[params[i].seriesIndex].valueType === 'percent') {
+              html += params[i].seriesName + ':' + params[i].value + '%<br>'
+            } else {
+              html += params[i].seriesName + ':' + params[i].value + '<br>'
+            }
+          }
+          return html
+        }
       },
       legend: {
         data: this.chartsOptions[index].optionDescription,
@@ -327,7 +358,8 @@ export default class StatisticsComponent extends Vue {
         type: 'value',
         axisLabel: {
           formatter: '{value}%'
-        }
+        },
+        max: 100
       },
       yAxis: {
         type: 'category',
@@ -341,7 +373,7 @@ export default class StatisticsComponent extends Vue {
 
   drawChartForMonthlyCount () {
     const element = document.getElementById('chart-monthly-report') as HTMLDivElement
-    if (element == null) console.log('chart-monthly-report is null')
+    // var bar_dv = this.$refs.chart_monthly_report
     const chart1 = echarts.init(element)
     var yAxis = {
       type: 'category',
@@ -354,7 +386,7 @@ export default class StatisticsComponent extends Vue {
       data: []
     }
 
-    this.monthlyCounts.reverse().slice(0, 3).forEach((item: Questionnaire.IMonthlyCount, index: number) => {
+    this.monthlyCounts.reverse().slice(0, 3).forEach((item: Form.IMonthlyCount, index: number) => {
       yAxis.data.push(item.month)
       series.data.push(Number(item.totalNumber))
     })
@@ -391,32 +423,20 @@ export default class StatisticsComponent extends Vue {
     chart1.setOption(option1)
   }
 
-  async fetchData () {
-    this.loading = true
-    const res = await NaireAction.statis({
+  async fetchAnswerStatistics () {
+    // this.loading = true
+    const res = await FormAction.statis({
       // answerId: this.$route.params.id
-      // TODO: for test purpose to use mock data for the time being
-      client: {
-        id: 1,
-        name: 'iForms_GTA',
-        token: 'YWVzLTI1Ni1nY206Y0c5UGMwMXFRWGxOUXpCM1RWTXdlVTlUTUhoT1VWZFJZMUA1Mi4zOS45MC4yNjo1MjIxOQNv6RRuGEVvmGjB+jimI/gw==',
-        isActive: 1
-      },
-      dealerId: '', // 703518
-      formId: 47,
-      from: 1402459763000,
-      marketId: '9999',
-      month: 2,
-      to: 1604082375869
+      client: Constants.client,
+      dealerId: this.selectedDealerId,
+      superFormId: this.selectedSuperFormId,
+      from: undefined,
+      to: undefined,
+      marketId: this.selectedMarketId,
+      month: this.selectedMonth
     })
-    this.loading = false
+    // this.loading = false
     if (res.success) {
-      //   this.optionCounts = res.data!.map(item => {
-      //     return {
-      //       ...item
-      //       // partOfAnswerList: item.type === questionType.TEXT_QUESTION ? item.answerList.slice(0, 100) : []
-      //     }
-      //   })
       this.optionCounts = res.data!
       this.getChartsData(res.data!)
     } else {
@@ -425,23 +445,18 @@ export default class StatisticsComponent extends Vue {
     }
   }
 
-  async fetchDataForMonthlyReport () {
-    this.loading = true
-    const res = await NaireAction.statis2({
-      client: {
-        id: 1,
-        name: 'iForms_GTA',
-        token: 'YWVzLTI1Ni1nY206Y0c5UGMwMXFRWGxOUXpCM1RWTXdlVTlUTUhoT1VWZFJZMUA1Mi4zOS45MC4yNjo1MjIxOQNv6RRuGEVvmGjB+jimI/gw==',
-        isActive: 1
-      },
-      dealerId: '', // 703518
-      formId: 47,
-      from: 1402459763000,
-      marketId: '9999',
-      month: 2,
-      to: 1604082375869
+  async fetchAnswerStatisticsForMonthlyReport () {
+    // this.loading = true
+    const res = await FormAction.statis2({
+      client: Constants.client,
+      dealerId: this.selectedDealerId,
+      formId: this.selectedFormId,
+      from: undefined,
+      to: undefined,
+      marketId: this.selectedMarketId,
+      month: ''
     })
-    this.loading = false
+    // this.loading = false
     if (res.success) {
       this.monthlyCounts = res.data!
       this.getChartsDataForMonthlyCount(res.data!)
@@ -451,80 +466,251 @@ export default class StatisticsComponent extends Vue {
     }
   }
 
+  async fetchMarkets () {
+    this.loadingMarkets = true
+    const res = await FormAction.markets()
+    this.loadingMarkets = false
+    if (res.success) {
+      this.allMarkets = res.data!
+      // if (this.allMarkets.length > 0) this.selectedMarket = this.allMarkets[0].id
+      if (this.userRole === roleEnum.ADMIN) {
+        this.selectedMarketId = this.marketIdOfCurrentUser
+        this.selectedMarket = ''
+        var marketResult = this.selectedMarket = this.allMarkets.filter(x => {
+          return x.id === this.selectedMarketId
+        })
+        if (marketResult.length === 1) {
+          this.selectedMarket = marketResult[0].name
+        }
+        if (this.selectedMarketId !== '') this.fetchDealersByMarketId(this.selectedMarketId)
+      }
+    } else {
+      this.$message.error('failed')
+      this.$router.back()
+    }
+  }
+
+  async fetchDealersByMarketId (marketId: string, isActive: number = 1) {
+    this.loadingDealers = true
+    const res = await FormAction.dealers({ marketId: marketId, isActive: isActive })
+    this.loadingDealers = false
+    if (res.success) {
+      this.allDealers = res.data!
+      // if (this.allDealers.length > 0) this.selectedDealer = this.allDealers[0].id
+    } else {
+      this.$message.error('failed')
+      this.$router.back()
+    }
+  }
+
+  async fetchForms (marketId: string, dealerId: string) {
+    this.loadingForms = true
+    const res = await FormAction.forms(marketId, dealerId)
+    this.loadingForms = false
+    if (res.success) {
+      this.allForms = res.data!.filter(x => x.language === 'en-us')
+      if (this.allForms.length > 0) {
+        this.selectedSuperFormId = this.allForms[0].superFormId
+        this.selectedFormId = this.allForms[0].id
+        this.selectedForm = this.allForms[0].title.toString()
+      }
+    } else {
+      this.$message.error('failed')
+      this.$router.back()
+    }
+  }
+
+  selectMarket (marketId: string) {
+    if (marketId !== '') {
+      this.selectedMarketId = marketId
+      this.selectedDealer = ''
+      this.selectedForm = ''
+      this.fetchDealersByMarketId(marketId)
+    } else {
+      this.allDealers = []
+      this.selectedDealer = ''
+      this.selectedForm = ''
+    }
+    this.$emit('selectChange', this.selectedMarket)
+  }
+
+  selectDealer (dealerId: string) {
+    if (dealerId !== '') {
+      this.selectedDealerId = dealerId
+      this.loadingForms = true
+      this.selectedForm = ''
+      this.fetchForms(this.selectedMarketId, dealerId)
+      this.loadingForms = false
+    } else {
+      this.allDealers = []
+      this.selectedDealer = ''
+      this.selectedForm = ''
+    }
+    this.$emit('selectChange', this.selectedMarket, this.selectedDealer)
+  }
+
+  selectForm (formId: string) {
+    if (formId !== '') {
+      this.selectedFormId = formId
+      this.allForms = this.allForms.filter(x => x.id === formId)[0].superFormId
+    }
+    this.$emit('selectChange', this.selectedForm)
+  }
+
+  selectMonth (time: Date) {
+    // Sat Feb 01 2020 00:00:00 GMT+0800 (China Standard Time)
+    // this.from = time.getTime()
+    var monthStr = time.getMonth() < Number(9) ? '0' + (time.getMonth() + 1) : (time.getMonth() + 1).toString()
+    this.selectedMonth = time.getFullYear() + '-' + monthStr
+    var temp: Date = new Date(time.getFullYear(), time.getMonth())
+    // this.to = new Date(temp.setMonth(time.getMonth() + 1)).getTime()
+  }
+
+  btnSearchClick () {
+    if (this.selectedMarketId !== '' && this.selectedDealerId !== '' &&
+        this.selectedFormId !== '' && this.selectedMonth !== '') {
+      this.loading = true
+      const element = document.getElementById('chart-monthly-report') as HTMLDivElement
+      echarts.dispose(element)
+      this.chartsOptions.forEach((item: any, index: NumberConstructor) => {
+        const chartElement = document.getElementById('chart-' + index) as HTMLDivElement
+        echarts.dispose(chartElement)
+      })
+
+      this.fetchAnswerStatistics()
+      this.fetchAnswerStatisticsForMonthlyReport()
+      this.loading = false
+    } else {
+      this.$message.warning({ message: this.$t('statistics.allConditionRequired').toString(), duration: 2000 })
+    }
+  }
+
   public mounted () {
-    this.fetchData()
-    this.fetchDataForMonthlyReport()
+    const flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+    if (flag) {
+      this.userRole = roleEnum.ADMIN
+      var currentMarketInfo = getMarketInfo()
+      this.marketIdOfCurrentUser = currentMarketInfo === undefined ? '' : currentMarketInfo.split('|')[0]
+    } else {
+      if (UserModule.userRole === 0) {
+        this.$message.warning(this.$t('common.tokenExpired').toString())
+        UserModule.logout()
+        this.$router.push('/login')
+      }
+      this.userRole = UserModule.userRole
+      this.marketIdOfCurrentUser = UserModule.userData.user === undefined ? '' : UserModule.userData.user.dept.market.id
+    }
+    this.fetchMarkets()
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.question-list {
-  padding: 20px 0;
-  margin-bottom: 20px;
-  border-bottom: 2px dotted #eee;
-  .question-item {
-    .title {
-      font-size: 16px;
+  .form-search-panel {
+    background-color: #fff;
+    padding: 5px 18px 18px 18px;
+    .select-wrapper {
+      background: #fff;
+      padding: 8px;
     }
-    .description {
-      font-size: 14px;
+    .search-button {
+      background: #fff;
+      padding: 8px;
+      text-align: center;
     }
   }
-}
 
-.result-table {
-  margin: 20px 0;
-}
-
-.overload-tip {
-  margin-top: 20px;
-}
-
-.chart-left{
-  width: 100%;
-  height: 200px;
-  float: left
-}
-
-.left {
-  width: 50%;
-  float: left
-}
-
-.chart-right{
-  width: 100%;
-  height: 200px;
-  float: right
-}
-
-.right {
-  width: 50%;
-  float: right
-}
-
-.el-select + .el-select {
-  margin-left: 15px;
-}
-
-.el-select + .el-date-editor {
-  margin-left: 15px;
-}
-
-.header {
-      padding: 10px 20px;
-      height: auto;
-      min-height: 33px;
-      border-bottom: 2px dotted #eee;
-
-      h1 {
-        width: 100%;
-        font-size: 32px !important;
-        margin: 0 auto;
-        text-align: center;
-      }
+  .form-result-panel {
+    padding: 10px 15px 15px 15px;
+    background-color: rgb(240, 242, 245);
+    .chart-wrapper {
+      background: #fff;
+      padding: 8px 0px 0px 0px;
     }
-.naire-search-panel {
-  margin: 10px;
-}
+  }
+
+  .result-table {
+    margin: 20px 0;
+  }
+
+  .overload-tip {
+    margin-top: 20px;
+  }
+
+  .chart-left{
+    width: 100%;
+    height: 200px;
+    float: left
+  }
+
+  .left {
+    width: 50%;
+    float: left
+  }
+
+  .chart-right{
+    width: 100%;
+    height: 200px;
+    float: right
+  }
+
+  .right {
+    width: 50%;
+    float: right
+  }
+
+  .el-select + .el-select {
+    margin-left: 15px;
+  }
+
+  .el-select + .el-date-editor {
+    margin-left: 15px;
+  }
+
+  .el-select {
+    display: block;
+  }
+
+  .header {
+    padding: 10px 20px;
+    height: auto;
+    min-height: 33px;
+    border-bottom: 2px dotted #eee;
+
+    h1 {
+      width: 100%;
+      font-size: 32px !important;
+      margin: 0 auto;
+      text-align: center;
+    }
+  }
+
+  .el-date-editor.el-input, .el-date-editor.el-input__inner {
+    width: 100% !important;
+  }
+
+  .el-row {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .el-select-dropdown {
+    max-width: 200px;
+  }
+  .el-select-dropdown__item {
+    display: inline-block;
+  }
+  .el-select-dropdown__item span {
+    min-width: 50px;
+    max-width: 150px;
+    display: inline-block;
+  }
+
+  .el-scrollbar {
+    > .el-scrollbar__bar {
+    opacity: 1 !important;
+    }
+  }
 </style>

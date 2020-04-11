@@ -1,10 +1,6 @@
 <template>
-  <div class="mt-20 mb-20">
-    <el-input
-      type="textarea"
-      :autosize="{minRows: 2,maxRows: 5}"
-      placeholder="请输入..."
-    />
+  <div class="text-input">
+    <el-input type="textarea" :autosize="{minRows: 2, maxRows: 10}" disabled resize="none" />
   </div>
 </template>
 
@@ -13,11 +9,13 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
 export default class extends Vue {
-  @Prop({ required: true }) private question!: Questionnaire.IQuestion
-  @Prop({ required: true }) private index!: number
+  @Prop({ required: true }) question!: Questionnaire.IQuestion
+  @Prop({ required: false }) answer!: Questionnaire.IAnswer
 }
 </script>
 
 <style lang="scss" scoped>
-
+  .text-input {
+    padding: 1rem 1rem 0 1.25rem;
+  }
 </style>

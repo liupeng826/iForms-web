@@ -1,55 +1,58 @@
 <template>
-  <div v-loading.fullscreen.lock="loading" class="naire-list">
-    <div class="naire-btn">
-      <el-button type="primary" @click="createNaire">创建问卷</el-button>
-      <el-button type="danger" @click="batchDelete">批量删除</el-button>
-    </div>
+  <div v-loading.fullscreen.lock="loading" class="form-list">
     <el-table :data="list" @selection-change="onSelectionChange">
-      <el-table-column
-        type="selection"
-        width="55"
-      />
-      <el-table-column prop="title" label="问卷名称" align="left">
+      <!-- <el-table-column type="selection" width="55" /> -->
+      <el-table-column prop="title" :label="$t('list.formName')" align="left">
         <template slot-scope="{ row }">
           <router-link tag="a" :to="`./view/${row.superFormId}`">
             {{ row.title }}
-            <el-tag v-if="isExpired(row.deadline)" class="ml-10" size="mini" type="danger">已截止</el-tag>
+            <el-tag
+              v-if="isExpired(row.deadline)"
+              class="ml-10"
+              size="mini"
+              type="danger"
+            >{{ $t('list.Expired') }}</el-tag>
           </router-link>
         </template>
       </el-table-column>
-      <el-table-column prop="createdDate" label="创建时间" align="center">
+      <!-- <el-table-column prop="deadline" :label="$t('list.deadline')" align="center">
         <template slot-scope="{ row }">
-          {{ row.createdDate | formatTime }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="deadline" label="截止时间" align="center">
-        <template slot-scope="{ row }">
-          <!-- 问卷超过截止日期 -->
           {{ row.deadline | formatTime }}
         </template>
+      </el-table-column> -->
+      <el-table-column prop="createdDate" :label="$t('list.createdDate')" align="center">
+        <template slot-scope="{ row }">{{ row.createdDate | formatTime }}</template>
       </el-table-column>
-      <el-table-column prop="publishStatus" label="发布状态" align="center">
+      <el-table-column prop="modifiedDate" :label="$t('list.modifiedDate')" align="center">
+        <template slot-scope="{ row }">{{ row.modifiedDate | formatTime }}</template>
+      </el-table-column>
+      <el-table-column prop="publishStatus" :label="$t('list.publishStatus')" align="center">
         <template slot-scope="{ row }">
-          <el-tag :type="row.publishStatus | statusColorFilter">
-            {{ row.publishStatus | statusFilter }}
-          </el-tag>
+          <el-tag :type="row.isActive | statusColorFilter">{{ row.isActive | statusFilter }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200px">
+      <el-table-column :label="$t('list.actionTitle')" align="center" width="250px">
         <template slot-scope="{ row }">
-          <el-button type="primary" size="mini" style="margin-right: 10px" @click="handleStatistics(row)">统计分析</el-button>
+          <!-- <el-button
+            type="primary"
+            size="mini"
+            style="margin-right: 10px"
+            @click="handleStatistics(row)"
+          >{{ $t('list.statistics') }}</el-button> -->
           <el-dropdown @command="onOptionClick($event, row)">
             <el-button type="danger" size="mini">
-              操作<i class="el-icon-arrow-down el-icon--right" />
+              {{ $t('list.action') }}
+              <i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="preview">预览问卷</el-dropdown-item>
-              <el-dropdown-item command="copyUrl">复制地址</el-dropdown-item>
-              <el-dropdown-item command="submitStatistic">查看回收情况</el-dropdown-item>
-              <el-dropdown-item command="edit" divided>编辑问卷</el-dropdown-item>
-              <el-dropdown-item command="deadline">编辑截止时间</el-dropdown-item>
-              <el-dropdown-item command="publish">{{ row.publishStatus === NaireStatus.PUBLISHED ? '停止发布' : '发布问卷' }}</el-dropdown-item>
-              <el-dropdown-item command="delete">删除问卷</el-dropdown-item>
+              <el-dropdown-item command="preview">{{ $t('list.previewForm') }}</el-dropdown-item>
+              <el-dropdown-item command="copyUrl">{{ $t('list.copyAddress') }}</el-dropdown-item>
+              <!-- <el-dropdown-item command="submitStatistic">查看回收情况</el-dropdown-item> -->
+              <!-- <el-dropdown-item command="deadline" divided>{{ $t('list.editDeadline') }}</el-dropdown-item> -->
+              <el-dropdown-item command="edit">{{ $t('list.editForm') }}</el-dropdown-item>
+              <el-dropdown-item command="translate">{{ $t('list.translateForm') }}</el-dropdown-item>
+              <!-- <el-dropdown-item command="delete">{{ $t('list.deleteForm') }}</el-dropdown-item> -->
+              <el-dropdown-item command="publish">{{ row.isActive === 1 ? $t('list.publishmentStop') : $t('list.publishForm') }}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -66,10 +69,14 @@ import { Component, Vue } from 'vue-property-decorator'
 import dayjs from 'dayjs'
 import ChangeTime from './components/ChangeTime.vue'
 import CopyUrl from './components/CopyUrl.vue'
-import * as NaireAction from '@/api/naire'
-import { IApiNaireItem } from '@/api/types'
+import * as FormAction from '@/api/form'
+import { client } from '@/constants/default.ts'
 
-import { NaireStatus, NaireStatusText, NaireStatusColor } from '@/config/enum/naireStatus'
+import {
+  FormStatus,
+  FormStatusText,
+  FormStatusColor
+} from '@/config/enum/formStatus'
 
 @Component({
   filters: {
@@ -77,11 +84,11 @@ import { NaireStatus, NaireStatusText, NaireStatusColor } from '@/config/enum/na
       const timestamp = Number(val)
       return dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss')
     },
-    statusFilter (val: NaireStatus) {
-      return NaireStatusText[val]
+    statusFilter (val: FormStatus) {
+      return FormStatusText[val]
     },
-    statusColorFilter (val: NaireStatus) {
-      return NaireStatusColor[val]
+    statusColorFilter (val: FormStatus) {
+      return FormStatusColor[val]
     }
   },
   components: {
@@ -90,13 +97,13 @@ import { NaireStatus, NaireStatusText, NaireStatusColor } from '@/config/enum/na
   }
 })
 export default class NavBar extends Vue {
-  private list: IApiNaireItem[] = []
-  private NaireStatus = NaireStatus
-  private loading: boolean = false
-  private changeTimeVisible: boolean = false
-  private copyUrlVisible: boolean = false
-  private editModel: any = {}
-  private selectContent: any[] = []
+  private list: Questionnaire.IForm[] = [];
+  private FormStatus = FormStatus;
+  private loading: boolean = false;
+  private changeTimeVisible: boolean = false;
+  private copyUrlVisible: boolean = false;
+  private editModel: any = {};
+  private selectContent: any[] = [];
 
   mounted () {
     this.fetchListData()
@@ -146,6 +153,14 @@ export default class NavBar extends Vue {
       case 'delete':
         this.singleDelete(row)
         break
+      case 'translate':
+        this.$router.push({
+          name: 'translate',
+          params: {
+            id: row.superFormId
+          }
+        })
+        break
     }
   }
 
@@ -157,48 +172,33 @@ export default class NavBar extends Vue {
     return deadline < Date.now()
   }
 
-  public createNaire () {
+  public createForm () {
     this.$router.push({ name: 'create' })
   }
 
-  private async deleteNaire (nIds: string) {
-    const res = await NaireAction.del({
-      id: nIds
-    })
+  private async deleteForm (row: Questionnaire.IForm) {
+    const res = await FormAction.publish(row)
     if (res.success) {
-      this.$message.success('删除成功')
+      this.$message.success(this.$t('list.deletionSuccessfully').toString())
       this.fetchListData()
     } else {
-      this.$message.error('删除失败')
+      this.$message.error(this.$t('list.deletionFailed').toString())
     }
   }
 
-  public singleDelete (row: IApiNaireItem) {
-    this.$confirm('您确认删除问卷吗？', '删除', {
+  public singleDelete (row: Questionnaire.IForm) {
+    this.$confirm(this.$t('list.reminderForDeletion').toString(), this.$t('list.reminder').toString(), {
       type: 'warning'
-    })
-      .then(async () => {
-        this.deleteNaire(row.id)
-      })
-      .catch(() => {})
-  }
-
-  public batchDelete () {
-    this.$confirm('您确认删除这几条内容吗？', '批量删除', {
-      type: 'warning'
-    })
-      .then(async () => {
-        const rowIds = this.selectContent.map(({ id }) => id).join(',')
-        this.deleteNaire(rowIds)
-      })
-      .catch(() => {})
+    }).then(async () => {
+      this.deleteForm({ ...row, isActive: 0, client })
+    }).catch(() => {})
   }
 
   /**
    * 查看统计
    * @param row
    */
-  public handleStatistics (row: IApiNaireItem) {
+  handleStatistics (row: Questionnaire.IForm) {
     this.$router.push({
       name: 'statisticsResult',
       params: {
@@ -208,17 +208,17 @@ export default class NavBar extends Vue {
   }
 
   /**
-   * 修改发布状态
+   * 发布/收回
    * @param row
    */
-  async changeStatus (row: IApiNaireItem) {
+  async changeStatus (row: Questionnaire.IForm) {
     this.loading = true
-    const res = await NaireAction.changeStatus({
-      id: row.id
+    const res = await FormAction.publish({
+      superFormId: row.superFormId
     })
     this.loading = false
     if (res.success) {
-      this.$message.success('更改状态成功')
+      this.$message.success(this.$t('list.updateStatusSuccessfully').toString())
       this.fetchListData()
     } else {
       this.$message.error(res.msg)
@@ -227,16 +227,16 @@ export default class NavBar extends Vue {
 
   public async fetchListData () {
     this.loading = true
-    const res = await NaireAction.list()
+    const res = await FormAction.list()
     this.loading = false
     if (!res.success) return
-    this.list = res.data ? res.data : []
+    this.list = res.data ? res.data.filter(item => item.language === 'en-us') : []
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .naire-btn {
-    margin: 10px;
-  }
+.form-btn {
+  margin: 10px;
+}
 </style>

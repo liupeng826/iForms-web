@@ -65,7 +65,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import * as UserAction from '@/api/user'
 import { sexEnumMap } from '@/config/enum/sex'
 import { ElForm } from 'element-ui/types/form'
-import { defaultUserData } from '@/api/default'
+import { defaultUserData } from '@/constants/default'
 
 interface IUserForm extends User.IUser{
   u_id: string

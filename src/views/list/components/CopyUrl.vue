@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" width="30%" title="复制地址">
+  <el-dialog :visible.sync="dialogVisible" width="30%" :title="$t('copyUrl.title')">
     <el-row>
       <el-col :span="18">
         <el-input
@@ -10,29 +10,28 @@
           :readonly="true"
         />
       </el-col>
-      <!-- 投票类地址 -->
+      <!-- 问卷地址 -->
       <el-col :span="4" :offset="1">
         <el-button
           class="copyboard"
           data-clipboard-target="#url"
           @click="handleCopy"
-        >复制</el-button>
+        >{{ $t('copyUrl.copy') }}</el-button>
       </el-col>
     </el-row>
-    <el-alert class="mt-20">如无法使用上方复制按钮，请选中内容后，使用 Ctrl + C 复制。也可扫描下方二维码或右键保存二维码进行访问。</el-alert>
+    <el-alert class="mt-20">{{ $t('copyUrl.reminder') }}</el-alert>
     <div class="qrcode-wrapper">
       <canvas ref="qrcode" />
     </div>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false">关闭</el-button>
+      <el-button @click="dialogVisible = false">{{ $t('copyUrl.close') }}</el-button>
     </div>
   </el-dialog>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { IApiNaireItem } from '@/api/types'
-import * as NaireAction from '@/api/naire'
+import * as FormAction from '@/api/form'
 import Clipboard from 'clipboard'
 import QRCode from 'qrcode'
 
@@ -43,8 +42,7 @@ export default class extends Vue {
   private deadline: Date = new Date()
 
   @Watch('model')
-  watchModel (val: IApiNaireItem) {
-    this.deadline = new Date(Number(val.n_deadline))
+  watchModel (val: Form.IForm) {
     this.$nextTick(() => {
       QRCode.toCanvas(this.$refs.qrcode, this.url, {
         width: 300
@@ -62,36 +60,20 @@ export default class extends Vue {
   }
 
   get url () {
-    return window.location.origin + '/#/view/' + this.model.n_id
+    return window.location.origin + '/#/view/' + this.model.superFormId
   }
 
   handleCopy () {
     const clipboard = new Clipboard('.copyboard')
 
     clipboard.on('success', (e) => {
-      this.$message.success('复制成功！')
+      this.$message.success(this.$t('copyUrl.successMsg').toString())
       e.clearSelection()
     })
 
     clipboard.on('error', (e) => {
-      this.$message.error('复制失败！')
+      this.$message.error(this.$t('copyUrl.failureMsg').toString())
     })
-  }
-
-  async submit () {
-    if (!this.deadline) {
-      return this.$message.warning('请填写截止时间！')
-    }
-    const res = await NaireAction.changeTime({
-      n_id: this.model.n_id,
-      n_deadline: this.deadline.getTime()
-    })
-    if (res.success) {
-      this.dialogVisible = false
-      this.$message.success('截止时间更改成功！')
-    } else {
-      this.$message.error('更改截止时间失败')
-    }
   }
 }
 </script>

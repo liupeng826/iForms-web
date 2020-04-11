@@ -33,6 +33,12 @@ const routes: RouteConfig[] = [
         meta: { navIndex: '/list', title: '编辑问卷' }
       },
       {
+        path: 'translate/:id',
+        name: 'translate',
+        component: () => import('@/views/edit/translate.vue'),
+        meta: { navIndex: '/list', title: '翻译问卷' }
+      },
+      {
         path: 'statistics/:id',
         name: 'statistics',
         component: () => import('@/views/statistics/index.vue'),
@@ -48,41 +54,14 @@ const routes: RouteConfig[] = [
               title: '结果统计',
               hasSubNav: true
             }
-          },
-          {
-            path: 'source',
-            name: 'statisticsSource',
-            component: () => import('@/views/statistics/source.vue'),
-            meta: {
-              navIndex: '/list',
-              subNavIndex: 'source',
-              title: '样本数据',
-              hasSubNav: true
-            }
-          },
-          {
-            path: 'cross-analysis',
-            name: 'statisticsCrossAnalysis',
-            component: () => import('@/views/statistics/cross-analysis.vue'),
-            meta: {
-              navIndex: '/list',
-              subNavIndex: 'cross-analysis',
-              title: '交叉分析',
-              hasSubNav: true
-            }
-          },
-          {
-            path: 'submit-statistics',
-            name: 'submitStatistics',
-            component: () => import('@/views/statistics/submit-statistics.vue'),
-            meta: {
-              navIndex: '/list',
-              subNavIndex: 'submit-statistics',
-              title: '回收情况',
-              hasSubNav: true
-            }
           }
         ]
+      },
+      {
+        path: 'statistics/',
+        name: 'statistics',
+        component: () => import('@/views/statistics/result.vue'),
+        meta: { navIndex: '/statistics/', title: '统计分析' }
       },
       {
         path: 'dept',
@@ -100,13 +79,13 @@ const routes: RouteConfig[] = [
         path: 'setting',
         name: 'setting',
         component: () => import('@/views/setting/setting.vue'),
-        meta: { navIndex: '/setting', title: '管理员设置' }
+        meta: { navIndex: '/setting', title: '修改密码' }
       },
       {
-        path: 'test',
-        name: 'test',
-        component: () => import('@/views/test/test.vue'),
-        meta: { navIndex: '/test', title: 'Test' }
+        path: '/i18n',
+        name: 'i18n',
+        component: () => import('@/views/i18n/index.vue'),
+        meta: { navIndex: '/i18n/', title: 'i18n' }
       }
     ]
   },
@@ -116,18 +95,43 @@ const routes: RouteConfig[] = [
     component: () => import('@/views/view/view.vue')
   },
   {
+    path: '/feedback/:id',
+    name: 'answer',
+    component: () => import('@/views/answer/answer.vue')
+  },
+  {
     path: '/complete',
     name: 'complete',
     component: () => import('@/views/view/complete.vue')
   },
   {
-    path: '*',
-    name: '404',
-    component: () => import('@/views/404/404.vue')
+    path: '/404',
+    component: () => import('@/views/error-page/404.vue')
   },
   {
-    path: '/result_phone',
-    component: () => import('@/views/statistics/result_phone.vue')
+    path: '/403',
+    component: () => import('@/views/error-page/403.vue')
+  },
+  {
+    path: '/redirect',
+    component: Layout,
+    children: [
+      {
+        path: '/redirect/:path*',
+        component: () => import('@/views/error-page/redirect.vue')
+      }
+    ]
+  },
+  {
+    path: '*',
+    name: '404',
+    component: () => import('@/views/error-page/404.vue')
+  },
+  {
+    path: '/statistics_phone',
+    name: 'statistics',
+    component: () => import('@/views/statistics/result.vue'),
+    meta: { navIndex: '/statistics/', title: 'statistics' }
   }
 ]
 

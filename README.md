@@ -79,10 +79,6 @@ yarn run build
 - qrcode
 - clipboard
 
-## 批量导入
-
-用户批量导入模板文件见 `/Import_Template.xls`
-
 ## API 及数据库
 
 #### .env.development
@@ -93,12 +89,4 @@ yarn run build
 
 生产环境请修改根目录下 `.env.production` 文件中的 `VUE_APP_BASE_API` 为线上的后端部署地址。
 查看 [iForms](https://github.com/liupeng826/iforms). 
-
-## 特别感谢
-
-https://github.com/52admln/ts-vue-questionnaire
-
-## LICENSE
-
-MIT
 

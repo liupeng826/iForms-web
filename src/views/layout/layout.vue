@@ -20,7 +20,7 @@
 <script>
 import { Component, Vue } from 'vue-property-decorator'
 import Logo from '@/components/Logo'
-import NavBar from '@/components/SideBar/NavBar'
+import NavBar from '@/components/NavBar/NavBar'
 import LayoutHeader from '@/components/LayoutHeader'
 import HeaderNav from './components/HeaderNav'
 

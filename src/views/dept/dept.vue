@@ -27,10 +27,10 @@
         </el-table-column>
       </el-table>
 
-      <div class="mt-20">
+      <!-- <div class="mt-20">
         <el-button type="danger" @click="batchDelete">批量删除</el-button>
         <el-button type="warning" @click="clearAll">一键清空</el-button>
-      </div>
+      </div> -->
     </div>
     <div class="pagination">
       <el-pagination
@@ -52,7 +52,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import * as DeptAction from '@/api/dept'
 import AddDept from '@/views/dept/components/AddDept.vue'
 import EditDept from '@/views/dept/components/EditDept.vue'
-import { defaultDeptData } from '@/api/default'
+import { defaultDeptData } from '@/constants/default'
 
 interface ISearchOption {
   value: string,

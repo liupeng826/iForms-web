@@ -1,133 +1,46 @@
 <template>
   <div>
-    <el-form-item
-      label="题目"
-      :prop="'topic.' + index + '.question'"
-      :rules="{
-        required: true, message: '题目内容不能为空', trigger: 'blur'
-      }"
-    >
-      <el-input v-model="topic.question" placeholder="请输入题目内容" />
+    <el-form-item :label="$t('question.title')" :prop="'sections[0].questions[' + order +'].title'" :rules="{required: true, message: $t('question.titleIsRequired'), trigger: 'change'}">
+      <el-input v-model="question.title" :placeholder="$t('question.placeholderForQuestionTitle')" />
     </el-form-item>
-    <el-form-item label="题目说明">
-      <el-input v-model="topic.description" placeholder="请输入题目说明，可以为空" />
+    <el-form-item :label="$t('question.introduction')">
+      <el-input v-model="question.subtitle" :placeholder="$t('question.placeholderForQuestionIntroduction')" />
     </el-form-item>
-    <el-form-item label="">
-      <div
-        v-for="(option, opIndex) in topic.options"
-        :key="opIndex"
-        class="option-item"
-      >
-        <el-row :gutter="22">
-          <el-col :span="18">
-            <el-form-item
-              :label="`选项 ${ opIndex + 1 }`"
-              :prop="'topic.' + index + '.options.' + opIndex + '.content'"
-              :rules="{
-                required: true, message: '选项内容不能为空', trigger: 'blur'
-              }"
-            >
-              <el-input
-                v-model="option.content"
-                placeholder="请输入选项内容"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-button
-              type="success"
-              icon="el-icon-plus"
-              size="mini"
-              @click="addOption(index)"
-            />
-            <el-button
-              type="warning"
-              icon="el-icon-delete"
-              size="mini"
-              @click="delOption(index, opIndex)"
-            />
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="18">
-            <el-form-item label="描述">
-              <el-input
-                v-model="option.desc"
-                type="textarea"
-                :autosize="{ minRows: 2,maxRows: 5 }"
-                placeholder="请输入选项描述"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row style="margin-bottom: 5px">
-          <el-col :span="18">
-            <el-form-item label="图片">
-              <el-input
-                v-model="option.image"
-                placeholder="请输入图片地址"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <div class="option-addtion">
-          <el-form-item
-            label="附加内容："
-            :prop="'topic.' + index + '.options.' + opIndex + '.isAddition'"
-            :rules="{
-              required: true, message: '选项内容不能为空', trigger: 'blur'
-            }"
-          >
-            <el-switch
-              v-model="option.isAddition"
-              active-text="有"
-              inactive-text="无"
-            />
-          </el-form-item>
-        </div>
-      </div>
-    </el-form-item>
-    <el-form-item
-      label="必填项"
-      :prop="'topic.' + index + '.isRequired'"
-      :rules="{
-        type: 'boolean', required: true, message: '请选择是否为必填项', trigger: 'change'
-      }"
-    >
-      <div class="option-addtion">
-        <el-switch
-          v-model="topic.isRequired"
-          active-text="有"
-          inactive-text="否"
-        />
-      </div>
-    </el-form-item>
+    <div class="option-addtion">
+      <span>{{ $t('question.mandatory') }}</span>&nbsp;&nbsp;
+      <el-switch v-model="question.mandatory" :active-value="1" :inactive-value="0" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import { QuestionnaireModule } from '@/store/modules/questionnaire'
 
 @Component
 export default class extends Vue {
-  @Prop({ required: true }) private topic!: Questionnaire.IQuestionItem
-  @Prop({ required: true }) private index!: number
+  @Prop({ required: true }) private order!: number
 
-  private delOption (index: number, opIndex: number) {
-    this.$emit('delOption', {
-      index,
-      opIndex
-    })
+  get question () {
+    const questions = QuestionnaireModule.form.sections[0].questions
+    if (questions) {
+      return questions[this.order]
+    }
   }
 
-  private addOption (index: number) {
-    this.$emit('addOption', {
-      index
-    })
+  set question (q: Questionnaire.IQuestion) {
+    QuestionnaireModule.updateQuestion(q)
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
+  .option-addtion {
+    padding: 9px 10px;
+    margin: 10px -20px -20px -20px;
+    border-top: 1px solid #EBEEF5;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    text-align: right;
+  }
 </style>

@@ -1,63 +1,68 @@
 <template>
-  <!-- 创建问卷 -->
-  <div v-loading.fullscreen.lock="loading" class="create">
-    <el-alert class="mb-20" type="error">编辑问卷会清空已有的统计数据，请确保问卷在未发布的情况下进行修改。</el-alert>
-    <el-form
-      ref="form"
-      :model="form"
-      :rules="rules"
-      label-position="right"
-      label-width="100px"
-    >
-      <el-form-item label="问卷名称" prop="title">
-        <el-input v-model="form.title" />
-      </el-form-item>
-      <el-form-item label="问卷介绍" prop="intro">
-        <el-input v-model="form.intro" type="textarea" rows="5" />
-      </el-form-item>
-
-      <div class="add-option">
-        <el-button type="primary" @click="addOption(questionType.SINGLE_CHOICE)">单选题</el-button>
-        <el-button type="primary" @click="addOption(questionType.MULTIPLE_CHOICE)">多选题</el-button>
-        <el-button type="primary" @click="addOption(questionType.TEXT_QUESTION)">文本题</el-button>
-        <el-button type="primary" @click="addOption(questionType.Rating)">符号评分题</el-button>
-        <el-button type="primary" @click="addOption(questionType.NET_PROMOTER_SCORE)">净推荐值题</el-button>
-        <el-button type="primary" @click="addOption(questionType.DATE_QUESTION)">日期题</el-button>
-      </div>
-
-      <question-list
-        :question-list="form.topic"
-        @delQuestion="onDelQuestion"
-        @addOption="onAddOption"
-        @delOption="onDelOption"
-      />
-
-      <el-form-item label="截止时间" prop="deadline">
-        <el-date-picker
-          v-model="form.deadline"
-          type="datetime"
-          :picker-options="datePickerOptions"
-          placeholder="选择日期时间"
-        />
-      </el-form-item>
-
-      <el-form-item>
-        <el-button type="default" @click="submitNaire(NaireStatus.UNPUBLISHED)">保存问卷</el-button>
-        <el-button type="success" @click="submitNaire(NaireStatus.PUBLISHED)">发布问卷</el-button>
-      </el-form-item>
-    </el-form>
+  <!-- 编辑问卷 -->
+  <div class="edit">
+    <el-alert class="mb-20" type="error">{{ $t('editForm.alertMsg') }}</el-alert>
+    <el-row>
+      <el-col :span="16" style="border-right: solid 1px #ccc; padding-right: 1rem; margin-right: 1rem;">
+        <el-form ref="form" :model="form" label-position="top" label-width="100px" size="mini">
+          <el-form-item :label="$t('createForm.formTitle')" prop="title" :rules="{ required: true, message: $t('createForm.formTitleRequired'), trigger: 'blur' }">
+            <el-input v-model="form.title" autofocus="true" />
+          </el-form-item>
+          <el-form-item :label="$t('createForm.formIntroduction')">
+            <el-input v-model="form.description" type="textarea" resize="none" rows="4" />
+          </el-form-item>
+          <question-list />
+          <br>
+          <el-divider><i class="el-icon-more" /></el-divider>
+          <div style="text-align:center">
+            <el-button-group>
+              <el-button plain round @click="addQuestion(questionType.SINGLE_CHOICE)">{{ $t('createForm.qtSingleChoice') }}</el-button>
+              <el-button plain @click="addQuestion(questionType.MULTIPLE_CHOICE)">{{ $t('createForm.qtMultiChoice') }}</el-button>
+              <el-button plain @click="addQuestion(questionType.TEXT_QUESTION)">{{ $t('createForm.qtTextQuestion') }}</el-button>
+              <el-button plain @click="addQuestion(questionType.RATING)">{{ $t('createForm.qtRating') }}</el-button>
+              <el-button plain @click="addQuestion(questionType.DATE_QUESTION)">{{ $t('createForm.qtDateQuestion') }}</el-button>
+              <el-button plain round @click="addQuestion(questionType.NET_PROMOTER_SCORE)">{{ $t('createForm.qtNetPromoterScore') }}</el-button>
+            </el-button-group>
+          </div>
+        </el-form>
+      </el-col>
+      <el-col :span="7">
+        <el-form :model="form" label-position="top" label-width="100px" size="mini">
+          <!-- <el-form-item :label="$t('createForm.formDeadline')">
+            <el-date-picker v-model="form.deadline" type="datetime" value-format="timestamp" :picker-options="datePickerOptions" :placeholder="$t('createForm.placeholderForDeadline')" />
+          </el-form-item> -->
+          <el-form-item :label="$t('createForm.otherConfig')">
+            <el-row>
+              <el-col :span="12">
+                <el-switch v-model="form.level" active-value="market" :active-text="$t('createForm.marketLevel')" inactive-value="" />
+              </el-col>
+              <el-col :span="12">
+                <el-switch v-model="form.sendEmail" :active-value="1" :active-text="$t('createForm.emailResponse')" :inactive-value="0" />
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <br>
+          <el-divider><i class="el-icon-s-tools" /></el-divider>
+          <div style="text-align:center">
+            <el-button-group>
+              <el-button type="primary" round :disabled="invalid" @click="saveForm()">{{ $t('createForm.saveForm') }}</el-button>
+              <el-button type="success" round :disabled="invalid" @click="publishForm()">{{ $t('createForm.publishForm') }}</el-button>
+            </el-button-group>
+          </div>
+        </el-form>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { QuestionnaireModule } from '@/store/modules/questionnaire'
+import { UserModule } from '@/store/modules/user'
+
 import dayjs from 'dayjs'
 import { Form as ElForm } from 'element-ui'
-
-import * as NaireAction from '@/api/naire'
-
-import { questionType, questionTypeText } from '@/config/enum/questionType'
-import { NaireStatus } from '@/config/enum/naireStatus'
+import { questionType } from '@/config/enum/questionType'
 
 import QuestionList from '@/components/Question/QuestionList.vue'
 
@@ -68,163 +73,98 @@ import QuestionList from '@/components/Question/QuestionList.vue'
 })
 export default class NavBar extends Vue {
   private questionType = questionType
-  private NaireStatus = NaireStatus
-  private form:Questionnaire.INaire = {
-    title: '',
-    intro: '',
-    deadline: '',
-    status: 0,
-    options: '',
-    topic: []
-  }
   private loading: boolean = false
-  private rules = {
-    title: [
-      { required: true, message: '请输入问卷标题', trigger: 'blur' }
-    ],
-    deadline: [
-      { required: true, message: '请选择截止时间', trigger: 'blur' }
-    ]
-  }
 
   private datePickerOptions = {
     disabledDate (time: Date) {
-      return time.getTime() < dayjs().add(-1, 'day').valueOf()
+      const timestamp = time.getTime()
+      const min = dayjs().add(-1, 'day').valueOf()
+      const max = 2145888000000
+      return (timestamp < min) || (timestamp > max)
     }
   }
 
-  private onAddOption ({ index }: { index: number }) {
-    const tempData = {
-      content: '选项',
-      isAddition: false,
-      image: '', // 选项图片
-      desc: ''
-    }
-    this.form.topic[index].options!.push({ ...tempData })
+  get form () {
+    return QuestionnaireModule.form
   }
 
-  private onDelOption ({ index, opIndex }: { index: number, opIndex: number }) {
-    if (this.form.topic[index].options!.length < 2) {
-      return this.$message.warning('已经是最后一个选项，无法删除。')
-    }
-    this.form.topic[index].options!.splice(opIndex, 1)
+  get invalid () {
+    const noQuestions = QuestionnaireModule.form.sections[0].questions.filter(item => item.isActive === 1).length === 0
+    const noTitle = QuestionnaireModule.form.title.trim() === ''
+    return noTitle || noQuestions
   }
 
-  private onDelQuestion ({ index }: { index: number }) {
-    this.form.topic.splice(index, 1)
+  addQuestion (type: Questionnaire.QuestionType) {
+    QuestionnaireModule.createQuestion(type)
   }
 
-  addOption (type: questionTypeText) {
-    switch (type) {
-      case questionType.SINGLE_CHOICE:
-        const radioQues = {
-          question: '单选题目',
-          options: [
-            {
-              content: '选项',
-              isAddition: false,
-              image: '',
-              desc: ''
-            }
-          ],
-          description: '',
-          type: '单选',
-          isRequired: true,
-          selectContent: '',
-          setting: {
-            last: 1
-          },
-          additional: ''
-        }
-        this.form.topic.push(radioQues)
-        break
-      case questionType.MULTIPLE_CHOICE:
-        const checkboxQues = {
-          question: '多选题目',
-          options: [
-            {
-              content: '选项',
-              isAddition: false,
-              image: '',
-              desc: ''
-            }
-          ],
-          description: '',
-          type: '多选',
-          isRequired: true,
-          setting: {
-            last: 1 // 最少选择几项
-          },
-          selectMultipleContent: []
-        }
-        this.form.topic.push(checkboxQues)
-        break
-      case questionType.TEXT_QUESTION:
-        const textareaQues = {
-          question: '文本题目',
-          description: '',
-          type: '文本',
-          isRequired: true,
-          setting: {},
-          selectContent: ''
-        }
-        this.form.topic.push(textareaQues)
-        break
-    }
-  }
-
-  submitNaire (type: NaireStatus) {
+  saveForm () {
+    QuestionnaireModule.resetQuestionSequences()
     const form = this.$refs.form as ElForm
     form.validate(async (valid) => {
-      if (!valid) return
-      if (this.form.topic.length === 0) {
-        return this.$message.warning('请至少添加一道题目。')
-      }
-      const params = {
-        naire: {
-          ...this.form,
-          deadline: new Date(this.form.deadline).getTime()
-        },
-        status: 'update'
-      }
-      this.loading = true
-      const res = await NaireAction.create(params)
-      this.loading = false
-      if (res.success) {
-        this.$message.success('修改问卷成功！')
-        await this.$router.push('/list')
-      } else {
-        this.$message.error(res.msg)
+      if (valid) {
+        const res = await QuestionnaireModule.updateForm()
+        if (res.success) {
+          this.$message.success(this.$t('createForm.saveFormSuccessfully').toString())
+          await this.$router.push('/list')
+          QuestionnaireModule.reset()
+        } else {
+          this.$message.error(res.msg)
+        }
       }
     })
   }
 
-  async fetchData () {
-    this.loading = true
-    const res = await NaireAction.detail({
-      n_id: this.$route.params.id,
-      type: 'normal'
+  publishForm () {
+    QuestionnaireModule.resetQuestionSequences()
+    const form = this.$refs.form as ElForm
+    form.validate(async (valid) => {
+      if (valid) {
+        const res = await QuestionnaireModule.publishForm()
+        if (res.success) {
+          this.$message.success(this.$t('createForm.publishFormSuccessfully').toString())
+          await this.$router.push('/list')
+          QuestionnaireModule.reset()
+        } else {
+          this.$message.error(res.msg)
+        }
+      }
     })
+  }
+
+  async loadForm () {
+    this.loading = true
+    // debugger
+    const res = await QuestionnaireModule.loadForm(this.$route.params.id)
     this.loading = false
     if (res.success) {
-      this.form = {
-        ...res.data,
-        deadline: new Date(Number(res.data.deadline))
+      const forms: Questionnaire.IForm[] = res.data
+      if (forms.length > 0) {
+        const common = forms.filter(item => {
+          return item.language === 'en-us'
+        })[0]
+        QuestionnaireModule.reset(common)
+      } else {
+        QuestionnaireModule.reset()
+        this.$message.error('nothing!')
       }
+    } else {
+      this.$message.error(res.msg)
     }
   }
 
   mounted () {
-    this.fetchData()
+    this.loadForm()
+  }
+
+  beforeDestroy () {
+    QuestionnaireModule.reset()
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .create {
-    .add-option {
-      margin-bottom: 20px;
-      text-align: center;
-    }
+  .edit {
+    user-select: none;
   }
 </style>
